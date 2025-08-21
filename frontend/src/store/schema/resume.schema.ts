@@ -58,6 +58,8 @@ export type PartialResumeData = Partial<ResumeData>;
 // If you need a type with optional required fields for creation
 export type ResumeDataCreate = {
   id: string;
+  name: string;
+  job_role: string;
   personal_info: PersonalInfo;
   education: Education;
   technical_skills: TechnicalSkills;

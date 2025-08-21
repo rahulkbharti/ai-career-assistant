@@ -17,6 +17,13 @@ const resumeSlice = createSlice({
     addResume(state, action: PayloadAction<ResumeDataCreate>) {
       state.resumes.push(action.payload);
     },
+    updateResume(state, action: PayloadAction<ResumeDataCreate>) {
+      const id: string = action.payload.id;
+      const index = state.resumes.findIndex((resume) => resume.id === id);
+      if (index !== -1) {
+        state.resumes[index] = action.payload;
+      }
+    },
     removeResume(state, action: PayloadAction<string>) {
       state.resumes = state.resumes.filter(
         (resume) => resume.id !== action.payload
@@ -25,5 +32,5 @@ const resumeSlice = createSlice({
   },
 });
 
-export const { addResume, removeResume } = resumeSlice.actions;
+export const { addResume, updateResume, removeResume } = resumeSlice.actions;
 export default resumeSlice.reducer;

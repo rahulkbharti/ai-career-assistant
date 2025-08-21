@@ -40,188 +40,16 @@ import {
   ExpandMore as ExpandMoreIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addResume,
+  updateResume,
+  removeResume,
+} from "../../../../store/features/resumeSlice";
 import type { RootState } from "../../../../store/store";
 import type { ResumeDataCreate } from "../../../../store/schema/resume.schema";
 
-// Define TypeScript interfaces
-interface PersonalInfo {
-  name: string;
-  address: string;
-  phone: string;
-  email: string;
-  linkedin: string;
-  github: string;
-}
-
-interface Education {
-  institution: string;
-  degree: string;
-  gpa: string;
-  graduation_date: string;
-  location: string;
-}
-
-interface TechnicalSkills {
-  programming_languages: string[];
-  frontend: string[];
-  backend: string[];
-  databases: string[];
-  cloud_platforms: string[];
-  testing_tools: string[];
-}
-
-interface Experience {
-  id: string;
-  company: string;
-  position: string;
-  start_date: string;
-  end_date: string;
-  location: string;
-  responsibilities: string[];
-}
-
-interface Project {
-  id: string;
-  name: string;
-  technologies: string[];
-  date: string;
-  description: string[];
-  github: string;
-}
-
-interface Resume {
-  id: string;
-  name: string;
-  personal_info: PersonalInfo;
-  education: Education;
-  technical_skills: TechnicalSkills;
-  experience: Experience[];
-  projects: Project[];
-  achievements: string[];
-  job_role: string;
-}
-
-// Master resume data
-const masterResume: Resume = {
-  id: "master",
-  name: "Master Resume",
-  personal_info: {
-    name: "RAHUL KUMAR BHARTI",
-    address: "Ghazipur, Uttar Pradesh 233300",
-    phone: "+91 7618805084",
-    email: "rahul.kbharti2002@gmail.com",
-    linkedin: "linkedin.com/in/rahul-kbharti",
-    github: "github.com/rahulkbharti",
-  },
-  education: {
-    institution: "Rajkiya Engineering College, Ambedkar Nagar",
-    degree: "Bachelor of Technology in Information Technology",
-    gpa: "7.8 / 10",
-    graduation_date: "Expected June 2025",
-    location: "Akabarpur, Uttar Pradesh",
-  },
-  technical_skills: {
-    programming_languages: ["C/C++", "JavaScript (ES6+)", "Python"],
-    frontend: ["React.js", "Redux", "Tailwind CSS", "HTML5/CSS3"],
-    backend: ["Node.js", "Express.js", "REST APIs", "JWT/OAuth"],
-    databases: ["NoSQL (MongoDB)", "SQL(MySQL)"],
-    cloud_platforms: [
-      "Google Cloud",
-      "Mircosoft Azure (Basics)",
-      "Docker",
-      "GitHub Actions",
-      "Git",
-    ],
-    testing_tools: ["Vitest (Jest-compatible)", "Postman", "VS Code", "Figma"],
-  },
-  experience: [
-    {
-      id: "exp1",
-      company: "Ekalsutra Edtech Pvt. Ltd.",
-      position: "Web App Development Intern",
-      start_date: "October 2023",
-      end_date: "December 2023",
-      location: "Akbarpur, Uttar Pradesh",
-      responsibilities: [
-        "Developed a responsive admin dashboard using React.js, Material UI, and Redux Toolkit, translating Figma designs into pixel-perfect Ul components with 95% design fidelity.",
-        "Optimized data flow by integrating REST APIs with React Query, reducing unnecessary re-renders by 30% through intelligent caching strategies.",
-        "Implemented 15+ form workflows using Formik & Yup, decreasing validation errors by 25% and improving form completion rates.",
-        "Secured application routes with JWT authentication, implementing token validation and protected routing.",
-        "Conducted comprehensive API testing with Postman (50+ endpoints) and wrote unit tests (Vitest) covering 80%+ of critical components.",
-        "Collaborated in Agile team using Git/GitHub, maintaining 100% code review compliance.",
-      ],
-    },
-  ],
-  projects: [
-    {
-      id: "proj1",
-      name: "Library Management ERP Solution",
-      technologies: [
-        "Node.js",
-        "Express",
-        "MySQL",
-        "JWT",
-        "OAuth 2.0",
-        "RBAC",
-        "Reactjs",
-      ],
-      date: "July 2025",
-      description: [
-        "Architected a full-stack solution with React.js + Material UI frontend and Node.js/Express backend serving 3 user roles (Admin/Staff/Member).",
-        "Implemented secure authentication using JWT + Google OAuth 2.0 with redux-persist for session management.",
-        "Designed normalized MySQL database with organization-based isolation and 40+ RBAC permissions controlled via admin dashboard.",
-        "Developed 15+ Formik forms with Yup validation and Axios interceptors, improving data submission accuracy.",
-        "Optimized state management using Redux Toolkit, encrypted and stored in local Storage",
-        "Established CI/CD pipeline with Vitest testing (85% coverage) and Winston logging for production monitoring.",
-      ],
-      github: "https://github.com/rahulkbharti/library_system-v2_backend.git",
-    },
-    {
-      id: "proj2",
-      name: "Real Time Video Chat App",
-      technologies: [
-        "WebRTC",
-        "Socket.io",
-        "Custom Hooks (useMedia + useWebRTC)",
-      ],
-      date: "January 2023",
-      description: [
-        "Built an Omegle-like video chat app using React, Node.js, and WebRTC, enabling real-time peer-to-peer connections with Socket.io for secure SDP exchange.",
-        "Implemented interest-based matching with a queue system and semaphore locks to prevent duplicate connections and ensure 1:1 pairing.",
-        "Developed custom hooks (useWebRTC, useMedia) to streamline WebRTC setup, media handling, and error management.",
-      ],
-      github: "https://github.com/rahulkbharti/real-time-video-chat.git",
-    },
-    {
-      id: "proj3",
-      name: "M3U8 Video Streaming App",
-      technologies: [
-        "FFmpeg",
-        "Azure Blob Storage",
-        "MongoDB",
-        "HLS.js",
-        "Nodejs(Child Process)",
-      ],
-      date: "August 2024",
-      description: [
-        "Developed an textbfadaptive M3u8 streaming service using Node.js, FFmpeg, and Azure Blob Storage, leveraging child processes for non-blocking video transcoding into multiple resolutions.",
-        "Implemented dynamic M3u8 playlist generation with signed URLs and expiry times, MongoDB for metadata storage, and Socket.io for real-time encoding status updates.",
-        "Designed a responsive frontend with HLS.js and Plyr.js for seamless playback, including video preview thumbnails and adaptive bitrate switching.",
-        "Automated CI/CD on Render with Github Action and Docker, slashing deployment time by 60%.",
-      ],
-      github: "https://github.com/rahulkbharti/m3u8-video-streaming.git",
-    },
-  ],
-  achievements: [
-    "Ranked 1961st in TCS CodeVita Season 12, an international competitive programming contest.",
-    "Completed 87+ hands-on labs, 27 courses, 23 quizzes, 7 gamified learning modules, and 3 structured learning paths on Google Cloud.",
-  ],
-  job_role: "Master",
-};
-
-// Empty resume template
-const emptyResume: Resume = {
+const emptyResume: ResumeDataCreate = {
   id: "",
   name: "",
   job_role: "",
@@ -246,52 +74,67 @@ const emptyResume: Resume = {
     backend: [],
     databases: [],
     cloud_platforms: [],
-    testing_tools: [],
+    tools: [],
   },
-  experience: [],
+  experiences: [],
   projects: [],
   achievements: [],
 };
 
 const ResumeBuilder = () => {
-  const resume_data = useSelector((state: RootState) => state.resumes || []);
+  const resumes = useSelector(
+    (state: RootState) => state.resumes.resumes || []
+  );
+  const dispatch = useDispatch();
 
-  console.log(resume_data);
+  console.log(resumes);
+  // const [resumes, setResumes] = useState<Resume[]>([]);
 
-  const [resumes, setResumes] = useState<Resume[]>([]);
-  const [selectedResume, setSelectedResume] = useState<Resume | null>(null);
+  const [selectedResume, setSelectedResume] = useState<ResumeDataCreate | null>(
+    null
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [newResumeName, setNewResumeName] = useState("");
   const [newJobRole, setNewJobRole] = useState("");
-  const [editingResume, setEditingResume] = useState<Resume | null>(null);
+  const [editingResume, setEditingResume] = useState<ResumeDataCreate | null>(
+    null
+  );
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-  const [createFromMaster, setCreateFromMaster] = useState(true);
+  const [createFromMaster, setCreateFromMaster] = useState("empty");
 
   // Initialize with master resume
+  // useEffect(() => {
+  //   setResumes([masterResume]);
+  //   setSelectedResume(masterResume);
+  // }, []);
+
   useEffect(() => {
-    setResumes([masterResume]);
-    setSelectedResume(masterResume);
+    if (resumes.length > 0) {
+      const body = { ...resumes[0] };
+      body.id = "master";
+      setSelectedResume(body);
+    }
   }, []);
 
   const handleCreateResume = () => {
     if (!newResumeName || !newJobRole) return;
 
-    const baseResume = createFromMaster
-      ? JSON.parse(JSON.stringify(masterResume))
-      : JSON.parse(JSON.stringify(emptyResume));
+    const baseResume =
+      resumes.find((r) => r.id === createFromMaster) || emptyResume;
 
-    const newResume: Resume = {
+    const _newResume: ResumeDataCreate = {
       ...baseResume,
       id: Date.now().toString(),
       name: newResumeName,
       job_role: newJobRole,
     };
 
-    setResumes([...resumes, newResume]);
-    setSelectedResume(newResume);
-    setEditingResume(newResume);
+    dispatch(addResume(_newResume));
+    // setResumes([...resumes, newResume]);
+    // setSelectedResume(newResume);
+    // setEditingResume(newResume);
     setNewResumeName("");
     setNewJobRole("");
     setDialogOpen(false);
@@ -302,10 +145,11 @@ const ResumeBuilder = () => {
   const handleEditResume = () => {
     if (!editingResume) return;
 
-    setResumes(
-      resumes.map((r) => (r.id === editingResume.id ? editingResume : r))
-    );
+    // setResumes(
+    //   resumes.map((r) => (r.id === editingResume.id ? editingResume : r))
+    // );
     setSelectedResume(editingResume);
+    dispatch(updateResume(editingResume));
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 3000);
     console.log(resumes);
@@ -316,12 +160,13 @@ const ResumeBuilder = () => {
       alert("Cannot delete master resume");
       return;
     }
-
-    setResumes(resumes.filter((r) => r.id !== id));
+    alert(id);
+    // dispatch(removeResume(id));
+    // setResumes(resumes.filter((r) => r.id !== id));
     if (selectedResume?.id === id) {
-      setSelectedResume(
-        resumes.find((r) => r.id !== id && r.id !== "master") || masterResume
-      );
+      // setSelectedResume(
+      //   resumes.find((r) => r.id !== id && r.id !== "master") || masterResume
+      // );
     }
   };
 
@@ -333,10 +178,8 @@ const ResumeBuilder = () => {
     subField?: string
   ) => {
     if (!editingResume) return;
-
     const value = e.target.value;
     const updatedResume = { ...editingResume };
-
     if (section === "personal_info") {
       updatedResume.personal_info = {
         ...updatedResume.personal_info,
@@ -378,7 +221,6 @@ const ResumeBuilder = () => {
       updatedSkills[subField as keyof TechnicalSkills] = skillArray;
       updatedResume.technical_skills = updatedSkills;
     }
-
     setEditingResume(updatedResume);
   };
 
@@ -394,13 +236,13 @@ const ResumeBuilder = () => {
     const updatedResume = { ...editingResume };
 
     if (section === "experience" && subIndex !== undefined) {
-      const updatedExperience = [...updatedResume.experience];
+      const updatedExperience = [...updatedResume.experiences];
       const updatedResponsibilities = [
         ...updatedExperience[index].responsibilities,
       ];
       updatedResponsibilities[subIndex] = value;
       updatedExperience[index].responsibilities = updatedResponsibilities;
-      updatedResume.experience = updatedExperience;
+      updatedResume.experiences = updatedExperience;
     } else if (section === "projects" && subIndex !== undefined) {
       const updatedProjects = [...updatedResume.projects];
       if (field === "description") {
@@ -459,12 +301,12 @@ const ResumeBuilder = () => {
 
     const updatedResume = { ...editingResume };
 
-    if (section === "experience" && subIndex !== undefined) {
-      const updatedExperience = [...updatedResume.experience];
+    if (section === "experiences" && subIndex !== undefined) {
+      const updatedExperience = [...updatedResume.experiences];
       updatedExperience[index].responsibilities = updatedExperience[
         index
       ].responsibilities.filter((_, i) => i !== subIndex);
-      updatedResume.experience = updatedExperience;
+      updatedResume.experiences = updatedExperience;
     } else if (section === "projects" && subIndex !== undefined) {
       const updatedProjects = [...updatedResume.projects];
       if (field === "description") {
@@ -507,7 +349,7 @@ const ResumeBuilder = () => {
 
     setEditingResume({
       ...editingResume,
-      experience: [...editingResume.experience, newExperience],
+      experiences: [...editingResume.experiences, newExperience],
     });
   };
 
@@ -516,7 +358,7 @@ const ResumeBuilder = () => {
 
     setEditingResume({
       ...editingResume,
-      experience: editingResume.experience.filter((_, i) => i !== index),
+      experiences: editingResume.experiences.filter((_, i) => i !== index),
     });
   };
 
@@ -668,7 +510,7 @@ const ResumeBuilder = () => {
         <Typography variant="h6" gutterBottom>
           Experience
         </Typography>
-        {selectedResume.experience.map((exp, index) => (
+        {selectedResume.experiences.map((exp, index) => (
           <Box key={index} sx={{ mb: 2 }}>
             <Typography>
               <strong>{exp.company}</strong> - {exp.position}
@@ -994,7 +836,7 @@ const ResumeBuilder = () => {
               Add Experience
             </Button>
 
-            {editingResume.experience.map((exp, index) => (
+            {editingResume.experiences.map((exp, index) => (
               <Accordion key={exp.id} defaultExpanded>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography>{exp.company || "New Experience"}</Typography>
@@ -1352,67 +1194,68 @@ const ResumeBuilder = () => {
         )}
 
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
-          {resumes.map((resume) => (
-            <Card
-              key={resume.id}
-              sx={{
-                minWidth: 250,
-                bgcolor:
-                  selectedResume?.id === resume.id
-                    ? "action.selected"
-                    : "background.paper",
-              }}
-              onClick={() => {
-                setSelectedResume(resume);
-                setEditingResume(null);
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {resume.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {resume.job_role}
-                </Typography>
-                <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                  {resume.personal_info.name}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <IconButton
-                  size="small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditingResume({ ...resume });
-                  }}
-                >
-                  <EditIcon />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedResume(resume);
-                    setViewDialogOpen(true);
-                  }}
-                >
-                  <ViewIcon />
-                </IconButton>
-                {resume.id !== "master" && (
+          {resumes &&
+            resumes.map((resume: ResumeDataCreate) => (
+              <Card
+                key={resume.id}
+                sx={{
+                  minWidth: 250,
+                  bgcolor:
+                    selectedResume?.id === resume.id
+                      ? "action.selected"
+                      : "background.paper",
+                }}
+                onClick={() => {
+                  setSelectedResume(resume);
+                  setEditingResume(null);
+                }}
+              >
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    {resume.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {resume.job_role}
+                  </Typography>
+                  <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+                    {resume.personal_info.name}
+                  </Typography>
+                </CardContent>
+                <CardActions>
                   <IconButton
                     size="small"
-                    color="error"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDeleteResume(resume.id);
+                      setEditingResume({ ...resume });
                     }}
                   >
-                    <DeleteIcon />
+                    <EditIcon />
                   </IconButton>
-                )}
-              </CardActions>
-            </Card>
-          ))}
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // setSelectedResume(resume);
+                      setViewDialogOpen(true);
+                    }}
+                  >
+                    <ViewIcon />
+                  </IconButton>
+                  {resume.id !== "master" && (
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteResume(resume.id);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
+                </CardActions>
+              </Card>
+            ))}
         </Box>
 
         {editingResume ? (
@@ -1421,6 +1264,9 @@ const ResumeBuilder = () => {
           </Paper>
         ) : (
           selectedResume && renderResumeView()
+          // <>
+          //   <Typography variant="h6">Resume Details</Typography>
+          // </>
         )}
       </Box>
 
@@ -1458,12 +1304,17 @@ const ResumeBuilder = () => {
           <FormControl fullWidth>
             <InputLabel>Template</InputLabel>
             <Select
-              value={createFromMaster ? "master" : "empty"}
+              value={createFromMaster}
               label="Template"
-              onChange={(e) => setCreateFromMaster(e.target.value === "master")}
+              onChange={(e) => setCreateFromMaster(e.target.value)}
             >
-              <MenuItem value="master">Based on Master Resume</MenuItem>
               <MenuItem value="empty">Start from Scratch</MenuItem>
+              {resumes &&
+                resumes.map((resume) => (
+                  <MenuItem key={resume.id} value={resume.id}>
+                    {resume.name}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
         </DialogContent>
