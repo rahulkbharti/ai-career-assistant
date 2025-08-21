@@ -1,0 +1,81 @@
+frontend/
+├── public/                 # Static assets (vite default)
+│   └── vite.svg
+├── src/
+│   ├── assets/            # Static assets imported into code (e.g., images, SVG)
+│   │   └── react.svg
+│   ├── components/        # Reusable UI components
+│   │   ├── ui/           # Dumb" presentational components (Button, Card, Modal)
+│   │   │   ├── CustomCard/
+│   │   │   │   ├── CustomCard.tsx
+│   │   │   │   ├── CustomCard.styles.ts
+│   │   │   │   └── index.ts        # Barrel file for clean imports
+│   │   │   └── ...
+│   │   └── layout/        # Layout-specific components
+│   │       ├── Header/
+│   │       │   ├── Header.tsx
+│   │       │   └── index.ts
+│   │       ├── Sidebar/
+│   │       ├── Layout.tsx # Main layout component (holds Header, Sidebar, main content)
+│   │       └── ...
+│   ├── contexts/          # React Context providers for global state
+│   │   ├── AuthContext.tsx
+│   │   ├── JobContext.tsx
+│   │   └── ...
+│   ├── features/          # ALL application features, each in its own folder
+│   │   ├── auth/          # Authentication feature
+│   │   │   ├── components/ # Feature-specific components (e.g., LoginForm)
+│   │   │   ├── hooks/     # Feature-specific hooks (e.g., useLogin)
+│   │   │   ├── types/     # Feature-specific TypeScript types
+│   │   │   └── ...
+│   │   ├── onboarding/    # User onboarding feature
+│   │   │   ├── components/
+│   │   │   │   ├── UploadResumeStep.tsx
+│   │   │   │   ├── ProfileQuestionnaireStep.tsx
+│   │   │   │   └── ...
+│   │   │   ├── hooks/
+│   │   │   ├── types/
+│   │   │   └── OnboardingWizard.tsx # Multi-step form container
+│   │   ├── dashboard/     # Main dashboard feature
+│   │   ├── job-analysis/  # The core JD analysis feature
+│   │   │   ├── components/
+│   │   │   │   ├── JdInputForm.tsx
+│   │   │   │   ├── AnalysisResultView.tsx
+│   │   │   │   └── SuggestionAccordion.tsx
+│   │   │   ├── hooks/
+│   │   │   │   └── useAnalyzeJob.ts  # Custom hook for the analysis API call
+│   │   │   ├── types/
+│   │   │   └── ...
+│   │   └── job-tracker/   # Job application management feature
+│   │       ├── components/
+│   │       │   ├── JobList.tsx
+│   │       │   ├── JobFilters.tsx
+│   │       │   ├── JobCard.tsx
+│   │       │   └── AddJobModal.tsx
+│   │       ├── hooks/
+│   │       ├── types/
+│   │       └── ...
+│   ├── hooks/             # Generic, app-wide custom hooks (e.g., useLocalStorage)
+│   ├── services/          # Modules for API communication
+│   │   ├── api.ts         # Axios instance with base config/interceptors
+│   │   ├── authApi.ts     # Functions for auth endpoints (login, signup)
+│   │   ├── jobApi.ts      # Functions for job endpoints
+│   │   ├── analysisApi.ts # Functions for the analysis endpoint
+│   │   └── ...
+│   ├── types/             # Global, shared TypeScript definitions
+│   │   └── index.ts
+│   ├── utils/             # Helper/utility functions
+│   │   ├── constants.ts   # App constants (e.g., jobStatuses)
+│   │   ├── formatters.ts  # Date/string formatting functions
+│   │   └── ...
+│   ├── themes/            # MUI theme customization
+│   │   └── theme.ts
+│   ├── App.tsx            # Main App component (with Router, Context providers)
+│   ├── main.tsx           # App entry point (wraps App in MUI ThemeProvider)
+│   └── vite-env.d.ts      # Vite type definitions
+├── index.html             # Vite's entry HTML file
+├── package.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts         # Vite configuration
+└── .eslintrc.cjs          # ESLint config (if using)
