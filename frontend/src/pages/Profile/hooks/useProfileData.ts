@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { extractResumeInformation } from "../../../gemini/system.ts";
+import { useDispatch } from "react-redux";
+import { addResume as _addResume } from "../../../store/features/resumeSlice.ts";
 
 export interface Resume {
   id: string;
@@ -34,7 +37,7 @@ const useProfileData = () => {
   });
 
   const [loading, setLoading] = useState(true);
-
+  const dispatch = useDispatch();
   // Load data from localStorage on component mount
   useEffect(() => {
     const savedData = localStorage.getItem("profileData");
@@ -61,7 +64,37 @@ const useProfileData = () => {
     }
   }, [profileData, loading]);
 
-  const addResume = (resume: Omit<Resume, "id">) => {
+  function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        if (typeof result === "string") {
+          const base64 = result.split(",")[1];
+          if (base64) {
+            resolve(base64); // Get only base64 part
+          } else {
+            reject(new Error("Failed to convert file to base64"));
+          }
+        } else {
+          reject(new Error("FileReader result is not a string"));
+        }
+      };
+      reader.onerror = reject;
+
+      reader.readAsDataURL(file);
+    });
+  }
+
+  const addResume = async (resume: Omit<Resume, "id">) => {
+    try {
+      const data_string: string = await fileToBase64(resume.file);
+      const resume_data = await extractResumeInformation(data_string);
+      const resume_json_data = JSON.parse(resume_data.response || "{}");
+      dispatch(_addResume(resume_json_data));
+    } catch (error) {
+      console.error("Error extracting resume information:", error);
+    }
     const newResume = {
       ...resume,
       id: Math.random().toString(36).substr(2, 9),

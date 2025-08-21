@@ -40,6 +40,9 @@ import {
   ExpandMore as ExpandMoreIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../../store/store";
+import type { ResumeDataCreate } from "../../../../store/schema/resume.schema";
 
 // Define TypeScript interfaces
 interface PersonalInfo {
@@ -251,6 +254,10 @@ const emptyResume: Resume = {
 };
 
 const ResumeBuilder = () => {
+  const resume_data = useSelector((state: RootState) => state.resumes || []);
+
+  console.log(resume_data);
+
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [selectedResume, setSelectedResume] = useState<Resume | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);

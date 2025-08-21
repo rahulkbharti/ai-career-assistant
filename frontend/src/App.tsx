@@ -1,15 +1,22 @@
 import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
 import ThemeProvider from "./themes/theme.tsx";
 import AppRouter from "./router/AppRouter.tsx";
+import { persistor, store } from "./store/store.ts";
+import { PersistGate } from "redux-persist/integration/react";
 // import AppRouter from "./router/AppRouter";
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider>
-      <BrowserRouter>
-        <AppRouter />
-      </BrowserRouter>
-    </ThemeProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <ThemeProvider>
+          <BrowserRouter>
+            <AppRouter />
+          </BrowserRouter>
+        </ThemeProvider>
+      </PersistGate>
+    </Provider>
   );
 };
 
