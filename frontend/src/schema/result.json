@@ -1,0 +1,81 @@
+{
+  "analysisMetadata": {
+    "analysisDate": "YYYY-MM-DD",
+    "resumeFileName": "UserResume.txt", // Placeholder
+    "jobDescriptionTitle": "[Job Title from Description]"
+  },
+  "overallMatch": {
+    "matchScore": "POTENTIAL_MATCH", // e.g., STRONG_MATCH, POTENTIAL_MATCH, NEEDS_IMPROVEMENT
+    "summary": "A concise summary of how your profile aligns with the role, highlighting key strengths and the most critical areas for improvement.",
+    "keyStrengths": [
+      "Strong foundation in core required technologies like [Technology A] and [Technology B].",
+      "Relevant project/work experience in [specific area mentioned in JD]."
+    ],
+    "criticalGaps": [
+      "Lack of explicit mention of [Key Skill C] from the job description.",
+      "Experience descriptions could be more results-oriented and quantified."
+    ]
+  },
+  "keywordAndAtsAnalysis": {
+    "matchedKeywords": [
+      {
+        "keyword": "JavaScript",
+        "context": "Found in skills and work experience."
+      },
+      { "keyword": "React", "context": "Listed in skills section." }
+    ],
+    "missingKeywords": [
+      {
+        "keyword": "Agile",
+        "recommendation": "If you have experience with Agile/Scrum, add it to your summary or a skills subsection."
+      },
+      {
+        "keyword": "RESTful APIs",
+        "recommendation": "Mention your experience with consuming or building RESTful APIs in your project descriptions."
+      }
+    ],
+    "atsRecommendation": "To improve ATS compatibility, integrate the 'missingKeywords' naturally into your work experience bullet points and professional summary."
+  },
+  "skillsGapAnalysis": {
+    "requiredQualifications": [
+      {
+        "requirement": "Bachelor's Degree in Computer Science",
+        "status": "MET",
+        "evidence": "Clearly stated in the Education section of your resume."
+      },
+      {
+        "requirement": "3+ years of experience with JavaScript",
+        "status": "UNCLEAR",
+        "comment": "Your resume shows 2 years of direct experience. If academic or project work adds to this, consider rephrasing to meet the requirement."
+      }
+    ],
+    "preferredQualifications": [
+      {
+        "requirement": "Experience with cloud services (AWS, Azure)",
+        "status": "MISSING",
+        "comment": "No mention of cloud services. If you have any exposure, add it to your skills or projects. If not, this is a known gap."
+      }
+    ]
+  },
+  "actionableImprovementSuggestions": {
+    "professionalSummary": {
+      "suggestion": "Rewrite your summary to directly address the job title and top 2-3 requirements from the job description.",
+      "exampleBefore": "Software developer with experience in building web applications.",
+      "exampleAfter": "Results-driven Software Developer with 3 years of experience specializing in front-end development with React and JavaScript. Seeking to leverage expertise in creating responsive user interfaces to contribute to [Company Name]'s team."
+    },
+    "workExperience": [
+      {
+        "targetJob": "Software Engineer at Previous Company",
+        "bulletPointToImprove": "'Developed features for the company's main application.'",
+        "suggestion": "Quantify the impact of your work. Use the STAR method (Situation, Task, Action, Result).",
+        "exampleAfter": "'Developed and launched 5 new user-facing features for the main application using React, resulting in a 10% increase in user engagement.'"
+      }
+    ],
+    "skillsSection": {
+      "suggestion": "Reorder your skills to prioritize those mentioned most prominently in the job description. Group skills into categories like 'Languages', 'Frameworks & Libraries', 'Tools'."
+    },
+    "projectsSection": {
+      "suggestion": "Ensure your project descriptions use the same technical keywords as the job description, especially for technologies like 'Node.js' or 'CSS'."
+    }
+  }
+}

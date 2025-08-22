@@ -1,5 +1,5 @@
 // src/pages/JobAnalysis/JobAnalysis.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -13,17 +13,23 @@ import {
 } from "@mui/material";
 import { Add as AddIcon, Close as CloseIcon } from "@mui/icons-material";
 import JobDescriptionForm from "./components/JobDescriptionForm/JobDescriptionForm";
-import AnalysisResult from "./components/AnalysisResult/AnalysisResult";
 import useJobAnalysis from "./hooks/useJobAnalysis";
+import AnalysisResult from "./components/AnalysisResult/AnalysisResult";
 
 const JobAnalysis: React.FC = () => {
-  const { result, loading, error, analyzeJob, resetAnalysis } =
-    useJobAnalysis();
-  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const {
+    result,
+    showResult,
+    jobInfo,
+    setJobInfo,
+    extracting,
+    analysing,
+    extractJobInfo,
+    analyzeJob,
+    error,
+  } = useJobAnalysis();
 
-  const handleAnalyze = (request: any) => {
-    analyzeJob(request);
-  };
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
 
   const handleSaveToTracker = () => {
     // This would integrate with the job tracker functionality
@@ -36,13 +42,13 @@ const JobAnalysis: React.FC = () => {
 
   const handleConfirmSave = () => {
     // Save the job to the tracker
-    console.log("Saving job to tracker:", result);
+    // console.log("Saving job to tracker:", result);
     setSaveDialogOpen(false);
     // Here you would call a function to save the job to your tracker
   };
 
   return (
-    <Box>
+    <Box sx={{ mt: 2 }}>
       <Typography variant="h4" gutterBottom>
         Job Analysis
       </Typography>
@@ -53,12 +59,19 @@ const JobAnalysis: React.FC = () => {
         </Alert>
       )}
 
-      {!result ? (
-        <JobDescriptionForm onAnalyze={handleAnalyze} loading={loading} />
+      {showResult === false ? (
+        <JobDescriptionForm
+          jobInfo={jobInfo}
+          setJobInfo={setJobInfo}
+          extracting={extracting}
+          analysing={analysing}
+          extractJobInfo={extractJobInfo}
+          analyzeJob={analyzeJob}
+        />
       ) : (
         <>
           <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-            <Button variant="outlined" onClick={resetAnalysis} sx={{ mr: 1 }}>
+            <Button variant="outlined" sx={{ mr: 1 }}>
               Analyze Another Job
             </Button>
             <Button

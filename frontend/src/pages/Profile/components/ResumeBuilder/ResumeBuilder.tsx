@@ -87,7 +87,7 @@ const ResumeBuilder = () => {
   );
   const dispatch = useDispatch();
 
-  console.log(resumes);
+  // console.log(resumes);
   // const [resumes, setResumes] = useState<Resume[]>([]);
 
   const [selectedResume, setSelectedResume] = useState<ResumeDataCreate | null>(
@@ -161,7 +161,7 @@ const ResumeBuilder = () => {
       return;
     }
     alert(id);
-    // dispatch(removeResume(id));
+    dispatch(removeResume(id));
     // setResumes(resumes.filter((r) => r.id !== id));
     if (selectedResume?.id === id) {
       // setSelectedResume(
@@ -1304,6 +1304,7 @@ const ResumeBuilder = () => {
           <FormControl fullWidth>
             <InputLabel>Template</InputLabel>
             <Select
+              size={"small"}
               value={createFromMaster}
               label="Template"
               onChange={(e) => setCreateFromMaster(e.target.value)}

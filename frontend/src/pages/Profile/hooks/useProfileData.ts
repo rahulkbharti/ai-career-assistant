@@ -90,12 +90,17 @@ const useProfileData = () => {
     try {
       const data_string: string = await fileToBase64(resume.file);
       const resume_data = await extractResumeInformation(data_string);
-      const resume_json_data = JSON.parse(resume_data.response || "{}");
-      resume_json_data.id = Math.random().toString(36).substr(2, 9);
-      resume_json_data.name = "master";
-      resume_json_data.job_role = "Software Engineering";
-      dispatch(_addResume(resume_json_data));
+      if (resume_data.success) {
+        const resume_json_data = JSON.parse(resume_data.response || "{}");
+        resume_json_data.id = Math.random().toString(36).substr(2, 9);
+        resume_json_data.name = "master";
+        resume_json_data.job_role = "Software Engineering";
+        dispatch(_addResume(resume_json_data));
+      } else {
+        alert(resume_data.error);
+      }
     } catch (error) {
+      alert(error);
       console.error("Error extracting resume information:", error);
     }
     const newResume = {

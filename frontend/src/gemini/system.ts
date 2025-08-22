@@ -32,7 +32,7 @@ if (!API_KEY) {
 }
 
 const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
 export const extractJobInformation = async (
   prompt: string = ""
@@ -44,7 +44,7 @@ export const extractJobInformation = async (
           role: "user",
           parts: [
             {
-              text: "Extract the information from the following job description text.",
+              text: "Extract the information from the following job description text. if Data not found keep Empty",
             },
             { text: prompt },
           ],

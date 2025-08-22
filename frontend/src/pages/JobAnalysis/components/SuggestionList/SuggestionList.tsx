@@ -15,15 +15,14 @@ import {
   PriorityHigh as PriorityHighIcon,
   LowPriority as LowPriorityIcon,
 } from "@mui/icons-material";
-import type { JobAnalysisResponse } from "../../../../services/jobAnalysisService";
+
+import type { Suggestion } from "../../../../store/schema/result.schema";
 
 interface SuggestionListProps {
-  result: JobAnalysisResponse;
+  suggestions: Suggestion[];
 }
 
-const SuggestionList: React.FC<SuggestionListProps> = ({ result }) => {
-  const { resumeSuggestions, suggestedActions } = result;
-
+const SuggestionList: React.FC<SuggestionListProps> = ({ suggestions }) => {
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case "high":
@@ -61,36 +60,36 @@ const SuggestionList: React.FC<SuggestionListProps> = ({ result }) => {
       </Typography>
 
       <List>
-        {resumeSuggestions.map((suggestion: any, index: number) => (
+        {suggestions.map((suggestion: any, index: number) => (
           <ListItem key={index}>
             <ListItemIcon>{getPriorityIcon(suggestion.priority)}</ListItemIcon>
             <ListItemText
               primary={
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Chip
-                    label={suggestion.section}
+                    label={suggestion.actual}
                     size="small"
                     sx={{ mr: 1 }}
                     color="primary"
                     variant="outlined"
                   />
-                  {suggestion.suggestion}
+                  {suggestion.actual} - {suggestion.suggestion}
                 </Box>
               }
-              secondary={`Priority: ${suggestion.priority}`}
+              secondary={`Priority: ${suggestion}`}
             />
           </ListItem>
         ))}
       </List>
 
-      {suggestedActions.length > 0 && (
+      {/* {suggestions.length > 0 && (
         <>
           <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
             Recommended Actions
           </Typography>
           <Paper variant="outlined" sx={{ p: 2 }}>
             <List dense>
-              {suggestedActions.map((action: any, index: number) => (
+              {suggestions.map((action: any, index: number) => (
                 <ListItem key={index}>
                   <ListItemIcon>
                     <LightbulbIcon color="info" />
@@ -101,7 +100,7 @@ const SuggestionList: React.FC<SuggestionListProps> = ({ result }) => {
             </List>
           </Paper>
         </>
-      )}
+      )} */}
     </Box>
   );
 };

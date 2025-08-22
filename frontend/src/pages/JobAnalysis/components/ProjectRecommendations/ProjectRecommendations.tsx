@@ -3,27 +3,25 @@ import React from "react";
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
+  // Card,
+  // CardContent,
   Chip,
-  Grid,
-  LinearProgress,
-  Rating,
+  // Grid,
+  // LinearProgress,
+  // Rating,
+  List,
+  ListItem,
+  // ListItemIcon,
+  ListItemText,
 } from "@mui/material";
-import type { JobAnalysisResponse } from "../../../../services/jobAnalysisService";
+
 interface ProjectRecommendationsProps {
-  result: JobAnalysisResponse;
+  recomendations: string[];
 }
 
 const ProjectRecommendations: React.FC<ProjectRecommendationsProps> = ({
-  result,
+  recomendations,
 }) => {
-  const { projectSuggestions } = result;
-
-  if (!projectSuggestions || projectSuggestions.length === 0) {
-    return null;
-  }
-
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
@@ -34,8 +32,29 @@ const ProjectRecommendations: React.FC<ProjectRecommendationsProps> = ({
         this role:
       </Typography>
 
-      <Grid container spacing={2}>
-        {projectSuggestions.map((project: any, index: number) => (
+      <List>
+        {recomendations.map((project: any, index: number) => (
+          <ListItem key={index}>
+            <ListItemText
+              primary={
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Chip
+                    label={project}
+                    size="small"
+                    sx={{ mr: 1 }}
+                    color="primary"
+                    variant="outlined"
+                  />
+                  {project}
+                </Box>
+              }
+              secondary={`Priority: ${project}`}
+            />
+          </ListItem>
+        ))}
+      </List>
+      {/* <Grid container spacing={2}>
+        {recomendations.map((project: any, index: number) => (
           <Grid size={{ xs: 12, md: 6 }} key={index}>
             <Card variant="outlined">
               <CardContent>
@@ -96,7 +115,7 @@ const ProjectRecommendations: React.FC<ProjectRecommendationsProps> = ({
             </Card>
           </Grid>
         ))}
-      </Grid>
+      </Grid> */}
     </Box>
   );
 };
