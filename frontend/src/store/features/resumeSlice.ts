@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { ResumeDataCreate } from "../schema/resume.schema";
 
+import type { ResumeSchema } from "../../schema/types/resume.types";
 type ResumeState = {
-  resumes: ResumeDataCreate[];
+  resumes: ResumeSchema[];
 };
 
 const initialState: ResumeState = {
@@ -14,10 +14,10 @@ const resumeSlice = createSlice({
   name: "resumes",
   initialState,
   reducers: {
-    addResume(state, action: PayloadAction<ResumeDataCreate>) {
+    addResume(state, action: PayloadAction<ResumeSchema>) {
       state.resumes.push(action.payload);
     },
-    updateResume(state, action: PayloadAction<ResumeDataCreate>) {
+    updateResume(state, action: PayloadAction<ResumeSchema>) {
       const id: string = action.payload.id;
       const index = state.resumes.findIndex((resume) => resume.id === id);
       if (index !== -1) {

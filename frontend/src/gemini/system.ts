@@ -2,7 +2,9 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import jobDescriptionSchema from "./schemas/job_descriptions.schema.js";
 import ResumeSchema from "./schemas/resume.schema.js";
 import JobAnalysisResult from "./schemas/job_analysis.schema.js";
+// import ResumeSchema from "../schema/gemini/resumeGemini.js";
 
+// import ResumeSchema from "../schema/gemini/resumeGemini.ts";
 // Define interfaces for the expected response types
 interface ApiResponse<T = any> {
   success: boolean;
@@ -25,14 +27,14 @@ interface ResumeInfo {
 //   [key: string]: any;
 // }
 
-const API_KEY = "AIzaSyDtdrmGEg14TMExvW0yPZ5Z28CplTYCfgo"; // You should get this from environment variables
+const API_KEY = "AIzaSyDqI_RR_DZToRIBOc33jw2nbEBInxZDx_8"; // You should get this from environment variables
 
 if (!API_KEY) {
   throw new Error("GOOGLE_API_KEY environment variable is required");
 }
 
 const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 export const extractJobInformation = async (
   prompt: string = ""
@@ -69,10 +71,6 @@ export const extractResumeInformation = async (
   data_string: string = ""
 ): Promise<ApiResponse<string>> => {
   try {
-    // const pdfBuffer = fs.readFileSync(path);
-    // const pdfBase64 = pdfBuffer.toString("base64");
-    // console.log("PDF Base64 Length:", pdfBase64.length);
-    // console.log("Size (in bytes):", pdfBuffer.length);
     if (!data_string) {
       return { success: false, error: "Data not found" };
     }

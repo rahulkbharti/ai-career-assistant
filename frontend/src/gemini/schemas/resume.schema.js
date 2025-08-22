@@ -1,86 +1,180 @@
 const ResumeSchema = {
     type: "object",
     properties: {
-        personal_info: {
+        basics: {
             type: "object",
             properties: {
                 name: { type: "string" },
-                address: { type: "string" },
-                phone: { type: "string" },
+                label: { type: "string" },
                 email: { type: "string" },
-                linkedin: { type: "string" },
-                github: { type: "string" }
+                phone: { type: "string" },
+                location: {
+                    type: "object",
+                    properties: {
+                        city: { type: "string" },
+                        region: { type: "string" },
+                        countryCode: { type: "string" },
+                        postalCode: { type: "string" },
+                    },
+                    required: ["city", "countryCode"],
+                },
+                website: { type: "string" },
+                profiles: {
+                    type: "array",
+                    items: {
+                        type: "object",
+                        properties: {
+                            network: { type: "string" },
+                            username: { type: "string" },
+                            url: { type: "string" },
+                        },
+                        required: ["network", "username"],
+                    },
+                },
             },
-            required: ["name", "address", "phone", "email", "linkedin", "github"]
+            required: ["name", "email"],
         },
-        education: {
-            type: "object",
-            properties: {
-                institution: { type: "string" },
-                degree: { type: "string" },
-                gpa: { type: "string" },
-                graduation_date: { type: "string" },
-                location: { type: "string" }
-            },
-            required: ["institution", "degree", "gpa", "graduation_date", "location"]
-        },
-        technical_skills: {
-            type: "object",
-            properties: {
-                programming_languages: { type: "array", items: { type: "string" } },
-                frontend: { type: "array", items: { type: "string" } },
-                backend: { type: "array", items: { type: "string" } },
-                databases: { type: "array", items: { type: "string" } },
-                cloud_platforms: { type: "array", items: { type: "string" } },
-                tools: { type: "array", items: { type: "string" } }
-
-            },
-            required: [
-                "programming_languages",
-                "frontend",
-                "backend",
-                "databases",
-                "cloud_platforms",
-                "tools",
-            ]
-        },
-        experiences: {
+        summary: { type: "string" },
+        workExperience: {
             type: "array",
             items: {
                 type: "object",
                 properties: {
-                    id: { type: "string" },
                     company: { type: "string" },
                     position: { type: "string" },
-                    start_date: { type: "string" },
-                    end_date: { type: "string" },
                     location: { type: "string" },
-                    responsibilities: { type: "array", items: { type: "string" } }
+                    startDate: { type: "string" },
+                    endDate: { type: "string" },
+                    summary: { type: "string" },
+                    highlights: {
+                        type: "array",
+                        items: { type: "string" },
+                    },
+                    keywords: {
+                        type: "array",
+                        items: { type: "string" },
+                    },
                 },
-                required: ["id", "company", "position", "start_date", "end_date", "location", "responsibilities"]
-            }
+                required: ["company", "position", "startDate"],
+            },
+        },
+        education: {
+            type: "array",
+            items: {
+                type: "object",
+                properties: {
+                    institution: { type: "string" },
+                    area: { type: "string" },
+                    studyType: { type: "string" },
+                    startDate: { type: "string" },
+                    endDate: { type: "string" },
+                    gpa: { type: "string" },
+                    courses: {
+                        type: "array",
+                        items: { type: "string" },
+                    },
+                },
+                required: ["institution", "area", "studyType", "startDate"],
+            },
+        },
+        skills: {
+            type: "array",
+            items: {
+                type: "object",
+                properties: {
+                    category: { type: "string" },
+                    keywords: {
+                        type: "array",
+                        items: { type: "string" },
+                    },
+                },
+                required: ["category", "keywords"],
+            },
         },
         projects: {
             type: "array",
             items: {
                 type: "object",
                 properties: {
-                    id: { type: "string" },
                     name: { type: "string" },
-                    technologies: { type: "array", items: { type: "string" } },
-                    date: { type: "string" },
-                    description: { type: "array", items: { type: "string" } },
-                    github: { type: "string" }
+                    summary: { type: "string" },
+                    technologies: {
+                        type: "array",
+                        items: { type: "string" },
+                    },
+                    highlights: {
+                        type: "array",
+                        items: { type: "string" },
+                    },
+                    url: { type: "string" },
+                    repository: { type: "string" },
                 },
-                required: ["id", "name", "technologies", "date", "description", "github"]
-            }
+                required: ["name", "summary"],
+            },
         },
         achievements: {
             type: "array",
-            items: { type: "string" }
-        }
+            items: {
+                type: "object",
+                properties: {
+                    title: { type: "string" },
+                    date: { type: "string" },
+                    description: { type: "string" },
+                    url: { type: "string" },
+                },
+                required: ["title", "description"],
+            },
+        },
+        certifications: {
+            type: "array",
+            items: {
+                type: "object",
+                properties: {
+                    name: { type: "string" },
+                    issuer: { type: "string" },
+                    date: { type: "string" },
+                    url: { type: "string" },
+                },
+                required: ["name", "issuer", "date"],
+            },
+        },
+        languages: {
+            type: "array",
+            items: {
+                type: "object",
+                properties: {
+                    language: { type: "string" },
+                    fluency: { type: "string" },
+                },
+                required: ["language", "fluency"],
+            },
+        },
+        interests: {
+            type: "array",
+            items: {
+                type: "object",
+                properties: {
+                    name: { type: "string" },
+                    keywords: {
+                        type: "array",
+                        items: { type: "string" },
+                    },
+                },
+                required: ["name"],
+            },
+        },
+        references: {
+            type: "array",
+            items: {
+                type: "object",
+                properties: {
+                    note: { type: "string" },
+                },
+                required: ["note"],
+            },
+        },
     },
-    required: ["personal_info", "education", "technical_skills", "experiences", "projects", "achievements"]
+    required: ["basics", "summary", "workExperience", "education", "skills"],
 };
 
 export default ResumeSchema;

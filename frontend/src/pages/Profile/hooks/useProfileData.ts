@@ -95,6 +95,7 @@ const useProfileData = () => {
         resume_json_data.id = Math.random().toString(36).substr(2, 9);
         resume_json_data.name = "master";
         resume_json_data.job_role = "Software Engineering";
+        // console.log(resume_json_data);
         dispatch(_addResume(resume_json_data));
       } else {
         alert(resume_data.error);

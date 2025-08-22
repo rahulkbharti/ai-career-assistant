@@ -40,6 +40,8 @@ import {
   ExpandMore as ExpandMoreIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
+// import CloseIcon from "@mui/icons-material/Close";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   addResume,
@@ -47,68 +49,68 @@ import {
   removeResume,
 } from "../../../../store/features/resumeSlice";
 import type { RootState } from "../../../../store/store";
-import type { ResumeDataCreate } from "../../../../store/schema/resume.schema";
+// import type { ResumeDataCreate } from "../../../../store/schema/resume.schema";
+import type { ResumeSchema } from "../../../../schema/types/resume.types";
 
-const emptyResume: ResumeDataCreate = {
-  id: "",
-  name: "",
-  job_role: "",
-  personal_info: {
-    name: "",
-    address: "",
-    phone: "",
-    email: "",
-    linkedin: "",
-    github: "",
+const emptyResume: ResumeSchema = {
+  id: "master",
+  name: "Master Resume",
+  job_role: "Your Job Role",
+  basics: {
+    name: "Your Name",
+    label: "Your Label",
+    email: "your.email@example.com",
+    phone: "123-456-7890",
+    location: {
+      city: "Anytown",
+      region: "CA",
+      countryCode: "US",
+      postalCode: "12345",
+    },
+    website: "https://yourwebsite.com",
+    profiles: [
+      {
+        network: "LinkedIn",
+        username: "your-linkedin",
+        url: "https://linkedin.com/in/your-linkedin",
+      },
+      {
+        network: "GitHub",
+        username: "your-github",
+        url: "https://github.com/your-github",
+      },
+    ],
   },
-  education: {
-    institution: "",
-    degree: "",
-    gpa: "",
-    graduation_date: "",
-    location: "",
-  },
-  technical_skills: {
-    programming_languages: [],
-    frontend: [],
-    backend: [],
-    databases: [],
-    cloud_platforms: [],
-    tools: [],
-  },
-  experiences: [],
+  summary: "A brief summary about yourself.",
+  workExperience: [],
+  education: [],
+  skills: [],
   projects: [],
   achievements: [],
+  certifications: [],
+  languages: [],
+  interests: [],
+  references: [],
 };
 
 const ResumeBuilder = () => {
+  const dispatch = useDispatch();
   const resumes = useSelector(
     (state: RootState) => state.resumes.resumes || []
   );
-  const dispatch = useDispatch();
+  console.log(resumes);
 
-  // console.log(resumes);
-  // const [resumes, setResumes] = useState<Resume[]>([]);
-
-  const [selectedResume, setSelectedResume] = useState<ResumeDataCreate | null>(
+  const [selectedResume, setSelectedResume] = useState<ResumeSchema | null>(
     null
   );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [newResumeName, setNewResumeName] = useState("");
   const [newJobRole, setNewJobRole] = useState("");
-  const [editingResume, setEditingResume] = useState<ResumeDataCreate | null>(
-    null
-  );
+  const [editingResume, setEditingResume] = useState<ResumeSchema | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [createFromMaster, setCreateFromMaster] = useState("empty");
-
-  // Initialize with master resume
-  // useEffect(() => {
-  //   setResumes([masterResume]);
-  //   setSelectedResume(masterResume);
-  // }, []);
 
   useEffect(() => {
     if (resumes.length > 0) {
@@ -124,7 +126,7 @@ const ResumeBuilder = () => {
     const baseResume =
       resumes.find((r) => r.id === createFromMaster) || emptyResume;
 
-    const _newResume: ResumeDataCreate = {
+    const _newResume: ResumeSchema = {
       ...baseResume,
       id: Date.now().toString(),
       name: newResumeName,
@@ -132,9 +134,6 @@ const ResumeBuilder = () => {
     };
 
     dispatch(addResume(_newResume));
-    // setResumes([...resumes, newResume]);
-    // setSelectedResume(newResume);
-    // setEditingResume(newResume);
     setNewResumeName("");
     setNewJobRole("");
     setDialogOpen(false);
@@ -161,232 +160,13 @@ const ResumeBuilder = () => {
       return;
     }
     alert(id);
-    dispatch(removeResume(id));
+    // dispatch(removeResume(id));
     // setResumes(resumes.filter((r) => r.id !== id));
     if (selectedResume?.id === id) {
       // setSelectedResume(
       //   resumes.find((r) => r.id !== id && r.id !== "master") || masterResume
       // );
     }
-  };
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    section: string,
-    field: string,
-    index?: number,
-    subField?: string
-  ) => {
-    if (!editingResume) return;
-    const value = e.target.value;
-    const updatedResume = { ...editingResume };
-    if (section === "personal_info") {
-      updatedResume.personal_info = {
-        ...updatedResume.personal_info,
-        [field]: value,
-      };
-    } else if (section === "education") {
-      updatedResume.education = { ...updatedResume.education, [field]: value };
-    } else if (section === "experience" && index !== undefined) {
-      const updatedExperience = [...updatedResume.experience];
-      if (subField === "responsibilities") {
-        // For responsibility editing, we need a separate handler
-        return;
-      }
-      updatedExperience[index] = {
-        ...updatedExperience[index],
-        [field]: value,
-      };
-      updatedResume.experience = updatedExperience;
-    } else if (section === "projects" && index !== undefined) {
-      const updatedProjects = [...updatedResume.projects];
-      if (subField === "description" || subField === "technologies") {
-        // For description/technologies editing, we need a separate handler
-        return;
-      }
-      updatedProjects[index] = { ...updatedProjects[index], [field]: value };
-      updatedResume.projects = updatedProjects;
-    } else if (section === "achievements" && index !== undefined) {
-      const updatedAchievements = [...updatedResume.achievements];
-      updatedAchievements[index] = value;
-      updatedResume.achievements = updatedAchievements;
-    } else if (
-      section === "technical_skills" &&
-      index !== undefined &&
-      subField
-    ) {
-      const updatedSkills = { ...updatedResume.technical_skills };
-      const skillArray = [...updatedSkills[subField as keyof TechnicalSkills]];
-      skillArray[index] = value;
-      updatedSkills[subField as keyof TechnicalSkills] = skillArray;
-      updatedResume.technical_skills = updatedSkills;
-    }
-    setEditingResume(updatedResume);
-  };
-
-  const handleArrayItemChange = (
-    section: string,
-    field: string,
-    index: number,
-    value: string,
-    subIndex?: number
-  ) => {
-    if (!editingResume) return;
-
-    const updatedResume = { ...editingResume };
-
-    if (section === "experience" && subIndex !== undefined) {
-      const updatedExperience = [...updatedResume.experiences];
-      const updatedResponsibilities = [
-        ...updatedExperience[index].responsibilities,
-      ];
-      updatedResponsibilities[subIndex] = value;
-      updatedExperience[index].responsibilities = updatedResponsibilities;
-      updatedResume.experiences = updatedExperience;
-    } else if (section === "projects" && subIndex !== undefined) {
-      const updatedProjects = [...updatedResume.projects];
-      if (field === "description") {
-        const updatedDescription = [...updatedProjects[index].description];
-        updatedDescription[subIndex] = value;
-        updatedProjects[index].description = updatedDescription;
-      } else if (field === "technologies") {
-        const updatedTechnologies = [...updatedProjects[index].technologies];
-        updatedTechnologies[subIndex] = value;
-        updatedProjects[index].technologies = updatedTechnologies;
-      }
-      updatedResume.projects = updatedProjects;
-    }
-
-    setEditingResume(updatedResume);
-  };
-
-  const addArrayItem = (section: string, field: string, index?: number) => {
-    if (!editingResume) return;
-
-    const updatedResume = { ...editingResume };
-
-    if (section === "experience" && index !== undefined) {
-      const updatedExperience = [...updatedResume.experience];
-      updatedExperience[index].responsibilities.push("");
-      updatedResume.experience = updatedExperience;
-    } else if (section === "projects" && index !== undefined) {
-      const updatedProjects = [...updatedResume.projects];
-      if (field === "description") {
-        updatedProjects[index].description.push("");
-      } else if (field === "technologies") {
-        updatedProjects[index].technologies.push("");
-      }
-      updatedResume.projects = updatedProjects;
-    } else if (section === "achievements") {
-      updatedResume.achievements.push("");
-    } else if (section === "technical_skills" && field) {
-      const updatedSkills = { ...updatedResume.technical_skills };
-      updatedSkills[field as keyof TechnicalSkills] = [
-        ...updatedSkills[field as keyof TechnicalSkills],
-        "",
-      ];
-      updatedResume.technical_skills = updatedSkills;
-    }
-
-    setEditingResume(updatedResume);
-  };
-
-  const removeArrayItem = (
-    section: string,
-    field: string,
-    index: number,
-    subIndex: number
-  ) => {
-    if (!editingResume) return;
-
-    const updatedResume = { ...editingResume };
-
-    if (section === "experiences" && subIndex !== undefined) {
-      const updatedExperience = [...updatedResume.experiences];
-      updatedExperience[index].responsibilities = updatedExperience[
-        index
-      ].responsibilities.filter((_, i) => i !== subIndex);
-      updatedResume.experiences = updatedExperience;
-    } else if (section === "projects" && subIndex !== undefined) {
-      const updatedProjects = [...updatedResume.projects];
-      if (field === "description") {
-        updatedProjects[index].description = updatedProjects[
-          index
-        ].description.filter((_, i) => i !== subIndex);
-      } else if (field === "technologies") {
-        updatedProjects[index].technologies = updatedProjects[
-          index
-        ].technologies.filter((_, i) => i !== subIndex);
-      }
-      updatedResume.projects = updatedProjects;
-    } else if (section === "achievements") {
-      updatedResume.achievements = updatedResume.achievements.filter(
-        (_, i) => i !== index
-      );
-    } else if (section === "technical_skills" && field) {
-      const updatedSkills = { ...updatedResume.technical_skills };
-      updatedSkills[field as keyof TechnicalSkills] = updatedSkills[
-        field as keyof TechnicalSkills
-      ].filter((_, i) => i !== index);
-      updatedResume.technical_skills = updatedSkills;
-    }
-
-    setEditingResume(updatedResume);
-  };
-
-  const addExperience = () => {
-    if (!editingResume) return;
-
-    const newExperience: Experience = {
-      id: Date.now().toString(),
-      company: "",
-      position: "",
-      start_date: "",
-      end_date: "",
-      location: "",
-      responsibilities: [""],
-    };
-
-    setEditingResume({
-      ...editingResume,
-      experiences: [...editingResume.experiences, newExperience],
-    });
-  };
-
-  const removeExperience = (index: number) => {
-    if (!editingResume) return;
-
-    setEditingResume({
-      ...editingResume,
-      experiences: editingResume.experiences.filter((_, i) => i !== index),
-    });
-  };
-
-  const addProject = () => {
-    if (!editingResume) return;
-
-    const newProject: Project = {
-      id: Date.now().toString(),
-      name: "",
-      technologies: [""],
-      date: "",
-      description: [""],
-      github: "",
-    };
-
-    setEditingResume({
-      ...editingResume,
-      projects: [...editingResume.projects, newProject],
-    });
-  };
-
-  const removeProject = (index: number) => {
-    if (!editingResume) return;
-
-    setEditingResume({
-      ...editingResume,
-      projects: editingResume.projects.filter((_, i) => i !== index),
-    });
   };
 
   const renderResumeView = () => {
@@ -403,9 +183,7 @@ const ResumeBuilder = () => {
             mb: 2,
           }}
         >
-          <Typography variant="h4">
-            {selectedResume.personal_info.name}
-          </Typography>
+          <Typography variant="h4">{selectedResume.basics.name}</Typography>
           <Chip label={selectedResume.job_role} color="primary" />
         </Box>
 
@@ -415,27 +193,40 @@ const ResumeBuilder = () => {
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, sm: 6 }}>
             <Typography>
-              <strong>Address:</strong> {selectedResume.personal_info.address}
+              <strong>Address:</strong> {selectedResume.basics.location.city},{" "}
+              {selectedResume.basics.location.region},{" "}
+              {selectedResume.basics.location.countryCode},{" "}
+              {selectedResume.basics.location.postalCode}
             </Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
             <Typography>
-              <strong>Phone:</strong> {selectedResume.personal_info.phone}
+              <strong>Phone:</strong> {selectedResume.basics.phone}
             </Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
             <Typography>
-              <strong>Email:</strong> {selectedResume.personal_info.email}
+              <strong>Email:</strong> {selectedResume.basics.email}
             </Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
             <Typography>
-              <strong>LinkedIn:</strong> {selectedResume.personal_info.linkedin}
+              <strong>LinkedIn:</strong>{" "}
+              {
+                selectedResume.basics.profiles.find(
+                  (profile) => profile.network === "linkedin"
+                )?.url
+              }
             </Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
             <Typography>
-              <strong>GitHub:</strong> {selectedResume.personal_info.github}
+              <strong>GitHub:</strong>{" "}
+              {
+                selectedResume.basics.profiles.find(
+                  (profile) => profile.network === "github"
+                )?.url
+              }
             </Typography>
           </Grid>
         </Grid>
@@ -445,81 +236,63 @@ const ResumeBuilder = () => {
         <Typography variant="h6" gutterBottom>
           Education
         </Typography>
-        <Typography>
-          <strong>{selectedResume.education.institution}</strong>
-        </Typography>
-        <Typography>{selectedResume.education.degree}</Typography>
-        <Typography>GPA: {selectedResume.education.gpa}</Typography>
-        <Typography>
-          Graduation: {selectedResume.education.graduation_date}
-        </Typography>
-        <Typography>{selectedResume.education.location}</Typography>
-
+        {selectedResume.education.length === 0 && (
+          <Typography>No education details available</Typography>
+        )}
+        {selectedResume.education.length > 0 && (
+          <>
+            {selectedResume.education.map((edu, index) => (
+              <React.Fragment key={index}>
+                <Typography>
+                  <strong>{edu.institution}</strong>
+                </Typography>
+                <Typography>{edu.area}</Typography>
+                <Typography>GPA: {edu.gpa}</Typography>
+                <Typography>Graduation: {edu.endDate}</Typography>
+                <Typography>{edu.institution}</Typography>
+              </React.Fragment>
+            ))}
+          </>
+        )}
         <Divider sx={{ my: 2 }} />
 
         <Typography variant="h6" gutterBottom>
           Technical Skills
         </Typography>
-        <Grid container spacing={2}>
+        {/*
+        <Grid container spacing={2}> */}
+        {selectedResume.skills.map((skill, index) => (
           <Grid size={{ xs: 12, sm: 6 }}>
             <Typography>
-              <strong>Programming Languages:</strong>
-            </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-              {selectedResume.technical_skills.programming_languages.map(
-                (skill, index) => (
-                  <Chip key={index} label={skill} size="small" />
-                )
-              )}
-            </Box>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography>
-              <strong>Frontend:</strong>
-            </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-              {selectedResume.technical_skills.frontend.map((skill, index) => (
-                <Chip key={index} label={skill} size="small" />
+              {skill.category}:{" "}
+              {skill.keywords.map((keyword, i) => (
+                <Chip
+                  sx={{ mx: 0.5 }}
+                  key={i}
+                  label={keyword}
+                  size="small"
+                  variant="outlined"
+                />
               ))}
-            </Box>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography>
-              <strong>Backend:</strong>
             </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-              {selectedResume.technical_skills.backend.map((skill, index) => (
-                <Chip key={index} label={skill} size="small" />
-              ))}
-            </Box>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography>
-              <strong>Databases:</strong>
-            </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-              {selectedResume.technical_skills.databases.map((skill, index) => (
-                <Chip key={index} label={skill} size="small" />
-              ))}
-            </Box>
-          </Grid>
-        </Grid>
+        ))}
 
         <Divider sx={{ my: 2 }} />
 
         <Typography variant="h6" gutterBottom>
-          Experience
+          Experiences
         </Typography>
-        {selectedResume.experiences.map((exp, index) => (
+        {selectedResume.workExperience.map((exp, index) => (
           <Box key={index} sx={{ mb: 2 }}>
             <Typography>
               <strong>{exp.company}</strong> - {exp.position}
             </Typography>
             <Typography>
-              {exp.start_date} to {exp.end_date} | {exp.location}
+              {exp.startDate} to {exp.endDate} | {exp.location}
             </Typography>
             <List dense>
-              {exp.responsibilities.map((resp, i) => (
+              {exp.highlights.map((resp, i) => (
                 <ListItem
                   key={i}
                   sx={{
@@ -544,7 +317,7 @@ const ResumeBuilder = () => {
         {selectedResume.projects.map((project, index) => (
           <Box key={index} sx={{ mb: 2 }}>
             <Typography>
-              <strong>{project.name}</strong> ({project.date})
+              {index + 1}. <strong>{project.name}</strong> ({"Ongoing"})
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, my: 1 }}>
               {project.technologies.map((tech, i) => (
@@ -552,7 +325,7 @@ const ResumeBuilder = () => {
               ))}
             </Box>
             <List dense>
-              {project.description.map((desc, i) => (
+              {project.highlights.map((desc, i) => (
                 <ListItem
                   key={i}
                   sx={{
@@ -567,7 +340,8 @@ const ResumeBuilder = () => {
               ))}
             </List>
             <Typography variant="body2">
-              <strong>GitHub:</strong> {project.github}
+              <strong>GitHub:</strong> {project.repository}
+              <strong>Live Demo:</strong> {project.url}
             </Typography>
           </Box>
         ))}
@@ -583,12 +357,174 @@ const ResumeBuilder = () => {
               key={index}
               sx={{ display: "list-item", listStyleType: "disc", pl: 0, ml: 2 }}
             >
-              <Typography variant="body2">{achievement}</Typography>
+              <Typography variant="body2">{achievement.description}</Typography>
             </ListItem>
           ))}
         </List>
       </Paper>
     );
+  };
+
+  // Handles input changes for nested resume fields
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    section: string,
+    name: string,
+    index?: number,
+    subIndex?: number
+  ) => {
+    if (!editingResume) return;
+    const value = e.target.value;
+    let updatedResume = { ...editingResume };
+
+    switch (section) {
+      case "basics":
+        if (name === "name" || name === "email" || name === "phone") {
+          updatedResume.basics = {
+            ...updatedResume.basics,
+            [name]: value,
+          };
+        } else if (name === "profiles") {
+          if (typeof index === "number")
+            updatedResume.basics.profiles[index].url = value;
+        }
+        break;
+      case "education":
+        if (typeof index === "number")
+          updatedResume.education[index] = {
+            ...updatedResume.education[index],
+            [name]: value,
+          };
+        break;
+      case "skills":
+        if (typeof index === "number" && typeof subIndex === "number") {
+          updatedResume.skills[index].keywords[subIndex] = value;
+        } else if (typeof index === "number") {
+          updatedResume.skills[index].category = value;
+        }
+        break;
+      case "workExperience":
+        if (typeof index === "number" && typeof subIndex === "number") {
+          updatedResume.workExperience[index].highlights[subIndex] = value;
+        } else if (typeof index === "number") {
+          // console.log("woek");
+          updatedResume.workExperience[index] = {
+            ...updatedResume.workExperience[index],
+            [name]: value,
+          };
+        }
+        break;
+      case "projects":
+        if (typeof index === "number" && typeof subIndex === "number") {
+          updatedResume.projects[index].highlights[subIndex] = value;
+        } else if (typeof index === "number") {
+          // console.log("woek");
+          updatedResume.projects[index] = {
+            ...updatedResume.projects[index],
+            [name]: value,
+          };
+        }
+        break;
+      case "achievements":
+        if (typeof index === "number")
+          updatedResume.achievements[index].description = value;
+        break;
+      default:
+        break;
+    }
+    setEditingResume(updatedResume);
+  };
+
+  const addSectionData = (section: string) => {
+    if (!editingResume) return;
+    let updatedResume = { ...editingResume };
+    switch (section) {
+      case "education":
+        updatedResume.education.push({
+          institution: "",
+          area: "",
+          studyType: "",
+          startDate: "",
+          endDate: "",
+          gpa: "",
+          courses: [""],
+        });
+        break;
+      case "skills":
+        updatedResume.skills.push({
+          category: "",
+          keywords: [""],
+        });
+        break;
+      case "workExperience":
+        updatedResume.workExperience.push({
+          company: "",
+          position: "",
+          location: "",
+          startDate: "",
+          endDate: "",
+          highlights: [],
+          summary: "",
+          keywords: [],
+        });
+        break;
+      case "projects":
+        updatedResume.projects.push({
+          name: "",
+          summary: "",
+          technologies: [""],
+          highlights: [""],
+          repository: "",
+          url: "",
+        });
+        break;
+      case "achievements":
+        updatedResume.achievements.push({
+          title: "",
+          date: "",
+          description: "",
+          url: "",
+        });
+        break;
+      default:
+        break;
+    }
+    setEditingResume(updatedResume);
+  };
+
+  const deleteSectionData = (section: string, index: number) => {
+    if (!editingResume) return;
+    let updatedResume = { ...editingResume };
+    switch (section) {
+      case "education":
+        updatedResume.education = updatedResume.education.filter(
+          (_, i) => i !== index
+        );
+        break;
+      case "skills":
+        updatedResume.skills = updatedResume.skills.filter(
+          (_, i) => i !== index
+        );
+        break;
+      case "workExperience":
+        updatedResume.workExperience = updatedResume.workExperience.filter(
+          (_, i) => i !== index
+        );
+        break;
+      case "projects":
+        updatedResume.projects = updatedResume.projects.filter(
+          (_, i) => i !== index
+        );
+        break;
+      case "achievements":
+        updatedResume.achievements = updatedResume.achievements.filter(
+          (_, i) => i !== index
+        );
+        break;
+      default:
+        break;
+    }
+    setEditingResume(updatedResume);
   };
 
   const renderEditForm = () => {
@@ -602,6 +538,7 @@ const ResumeBuilder = () => {
           sx={{ mb: 2 }}
         >
           <Tab label="Basic Info" />
+          <Tab label="Edcuation" />
           <Tab label="Skills" />
           <Tab label="Experience" />
           <Tab label="Projects" />
@@ -630,7 +567,19 @@ const ResumeBuilder = () => {
               }
               margin="normal"
             />
-
+            <TextField
+              id="outlined-multiline-flexible"
+              label="Summary"
+              fullWidth
+              value={editingResume.summary}
+              size="small"
+              multiline
+              maxRows={4}
+              margin="normal"
+              onChange={(e) => {
+                setEditingResume({ ...editingResume, summary: e.target.value });
+              }}
+            />
             <Typography variant="h6" sx={{ mt: 3 }}>
               Personal Information
             </Typography>
@@ -640,10 +589,8 @@ const ResumeBuilder = () => {
                   size="small"
                   fullWidth
                   label="Name"
-                  value={editingResume.personal_info.name}
-                  onChange={(e) =>
-                    handleInputChange(e, "personal_info", "name")
-                  }
+                  value={editingResume.basics.name}
+                  onChange={(e) => handleInputChange(e, "basics", "name")}
                   margin="normal"
                 />
               </Grid>
@@ -652,10 +599,8 @@ const ResumeBuilder = () => {
                   size="small"
                   fullWidth
                   label="Email"
-                  value={editingResume.personal_info.email}
-                  onChange={(e) =>
-                    handleInputChange(e, "personal_info", "email")
-                  }
+                  value={editingResume.basics.email}
+                  onChange={(e) => handleInputChange(e, "basics", "email")}
                   margin="normal"
                 />
               </Grid>
@@ -664,199 +609,106 @@ const ResumeBuilder = () => {
                   size="small"
                   fullWidth
                   label="Phone"
-                  value={editingResume.personal_info.phone}
-                  onChange={(e) =>
-                    handleInputChange(e, "personal_info", "phone")
-                  }
-                  margin="normal"
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  size="small"
-                  fullWidth
-                  label="Address"
-                  value={editingResume.personal_info.address}
-                  onChange={(e) =>
-                    handleInputChange(e, "personal_info", "address")
-                  }
-                  margin="normal"
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  size="small"
-                  fullWidth
-                  label="LinkedIn"
-                  value={editingResume.personal_info.linkedin}
-                  onChange={(e) =>
-                    handleInputChange(e, "personal_info", "linkedin")
-                  }
-                  margin="normal"
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  size="small"
-                  fullWidth
-                  label="GitHub"
-                  value={editingResume.personal_info.github}
-                  onChange={(e) =>
-                    handleInputChange(e, "personal_info", "github")
-                  }
+                  value={editingResume.basics.phone}
+                  onChange={(e) => handleInputChange(e, "basics", "phone")}
                   margin="normal"
                 />
               </Grid>
             </Grid>
-
             <Typography variant="h6" sx={{ mt: 3 }}>
-              Education
+              Social Profiles
             </Typography>
             <Grid container spacing={2}>
-              <Grid size={{ xs: 12, sm: 6 }}>
+              {editingResume.basics.profiles.map((profile, index) => (
+                <Grid key={index} size={{ xs: 12, sm: 6 }}>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    label={profile.network}
+                    value={profile.url}
+                    onChange={(e) =>
+                      handleInputChange(e, "basics", "profiles", index)
+                    }
+                    margin="normal"
+                  />
+                </Grid>
+              ))}
+            </Grid>
+            <Typography variant="h6" sx={{ mt: 3 }}>
+              Address
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <TextField
                   size="small"
                   fullWidth
-                  label="Institution"
-                  value={editingResume.education.institution}
-                  onChange={(e) =>
-                    handleInputChange(e, "education", "institution")
-                  }
+                  label="City"
+                  value={editingResume.basics.location.city}
                   margin="normal"
                 />
               </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <TextField
                   size="small"
                   fullWidth
-                  label="Degree"
-                  value={editingResume.education.degree}
-                  onChange={(e) => handleInputChange(e, "education", "degree")}
+                  label="Region"
+                  value={editingResume.basics.location.region}
                   margin="normal"
                 />
               </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <TextField
                   size="small"
                   fullWidth
-                  label="GPA"
-                  value={editingResume.education.gpa}
-                  onChange={(e) => handleInputChange(e, "education", "gpa")}
+                  label="Contry Code"
+                  value={editingResume.basics.location.countryCode}
                   margin="normal"
                 />
               </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <TextField
                   size="small"
                   fullWidth
-                  label="Graduation Date"
-                  value={editingResume.education.graduation_date}
-                  onChange={(e) =>
-                    handleInputChange(e, "education", "graduation_date")
-                  }
-                  margin="normal"
-                />
-              </Grid>
-              <Grid size={{ xs: 12 }}>
-                <TextField
-                  size="small"
-                  fullWidth
-                  label="Location"
-                  value={editingResume.education.location}
-                  onChange={(e) =>
-                    handleInputChange(e, "education", "location")
-                  }
+                  label="Postal Code"
+                  value={editingResume.basics.location.postalCode}
                   margin="normal"
                 />
               </Grid>
             </Grid>
           </Box>
         )}
-
         {activeTab === 1 && (
           <Box>
-            {Object.entries(editingResume.technical_skills).map(
-              ([category, skills]) => (
-                <Accordion key={category} defaultExpanded>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>
-                      {category.replace(/_/g, " ").toUpperCase()}
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {skills.map((skill: string, index: number) => (
-                      <Box
-                        key={index}
-                        sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                      >
-                        <TextField
-                          size="small"
-                          fullWidth
-                          value={skill}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e,
-                              "technical_skills",
-                              "",
-                              index,
-                              category
-                            )
-                          }
-                          margin="dense"
-                        />
-                        <IconButton
-                          onClick={() =>
-                            removeArrayItem(
-                              "technical_skills",
-                              category,
-                              index,
-                              0
-                            )
-                          }
-                        >
-                          <CloseIcon />
-                        </IconButton>
-                      </Box>
-                    ))}
-                    <Button
-                      onClick={() => addArrayItem("technical_skills", category)}
-                    >
-                      Add Skill
-                    </Button>
-                  </AccordionDetails>
-                </Accordion>
-              )
-            )}
-          </Box>
-        )}
-
-        {activeTab === 2 && (
-          <Box>
-            <Button onClick={addExperience} sx={{ mb: 2 }}>
-              Add Experience
-            </Button>
-
-            {editingResume.experiences.map((exp, index) => (
-              <Accordion key={exp.id} defaultExpanded>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>{exp.company || "New Experience"}</Typography>
+            <Box>
+              <Button
+                sx={{ mb: 2 }}
+                onClick={() => addSectionData("education")}
+              >
+                Add Education
+              </Button>
+            </Box>
+            {editingResume.education.map((education, index) => (
+              <Accordion>
+                <AccordionSummary>
+                  {education.studyType || "New Education"}{" "}
                 </AccordionSummary>
                 <AccordionDetails>
                   <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                    <IconButton onClick={() => removeExperience(index)}>
+                    <IconButton
+                      onClick={() => deleteSectionData("education", index)}
+                    >
                       <CloseIcon />
                     </IconButton>
                   </Box>
-
-                  <Grid container spacing={2}>
+                  <Grid key={index} container spacing={2}>
                     <Grid size={{ xs: 12, sm: 6 }}>
                       <TextField
                         size="small"
                         fullWidth
-                        label="Company"
-                        value={exp.company}
+                        label="Degree Type"
+                        value={education.studyType}
                         onChange={(e) =>
-                          handleInputChange(e, "experience", "company", index)
+                          handleInputChange(e, "education", "studyType", index)
                         }
                         margin="normal"
                       />
@@ -865,25 +717,25 @@ const ResumeBuilder = () => {
                       <TextField
                         size="small"
                         fullWidth
-                        label="Position"
-                        value={exp.position}
+                        label="Area of Study"
+                        value={education.area}
                         onChange={(e) =>
-                          handleInputChange(e, "experience", "position", index)
+                          handleInputChange(e, "education", "area", index)
                         }
                         margin="normal"
                       />
                     </Grid>
-                    <Grid size={{ xs: 12, sm: 6 }}>
+                    <Grid size={{ xs: 12 }}>
                       <TextField
                         size="small"
                         fullWidth
-                        label="Start Date"
-                        value={exp.start_date}
+                        label="Institution"
+                        value={education.institution}
                         onChange={(e) =>
                           handleInputChange(
                             e,
-                            "experience",
-                            "start_date",
+                            "education",
+                            "institution",
                             index
                           )
                         }
@@ -894,233 +746,339 @@ const ResumeBuilder = () => {
                       <TextField
                         size="small"
                         fullWidth
-                        label="End Date"
-                        value={exp.end_date}
+                        label="GPA"
+                        value={education.gpa}
                         onChange={(e) =>
-                          handleInputChange(e, "experience", "end_date", index)
+                          handleInputChange(e, "education", "gpa", index)
                         }
                         margin="normal"
                       />
                     </Grid>
-                    <Grid size={{ xs: 12 }}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <TextField
                         size="small"
                         fullWidth
-                        label="Location"
-                        value={exp.location}
+                        label="Graduation Date"
+                        value={education.endDate}
                         onChange={(e) =>
-                          handleInputChange(e, "experience", "location", index)
+                          handleInputChange(e, "education", "endDate", index)
                         }
                         margin="normal"
                       />
                     </Grid>
                   </Grid>
+                </AccordionDetails>
+              </Accordion>
+            ))}
+          </Box>
+        )}
+        {activeTab === 2 && (
+          <Box>
+            <Box>
+              <Button sx={{ mb: 2 }} onClick={() => addSectionData("skills")}>
+                Add Skill Category
+              </Button>
+            </Box>
+            {editingResume.skills.map((skill, index) => (
+              <Accordion key={index}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    value={skill.category}
+                    margin="dense"
+                    onChange={(e) =>
+                      handleInputChange(e, "skills", "category", index)
+                    }
+                  />
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                    <IconButton
+                      onClick={() => deleteSectionData("skills", index)}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Box>
 
                   <Typography variant="h6" sx={{ mt: 2 }}>
-                    Responsibilities
+                    Skills
                   </Typography>
-                  {exp.responsibilities.map((responsibility, respIndex) => (
+                  {skill.keywords.map((keyword, subIndex) => (
                     <Box
-                      key={respIndex}
+                      key={subIndex}
                       sx={{ display: "flex", alignItems: "center", mb: 1 }}
                     >
                       <TextField
                         size="small"
                         fullWidth
                         multiline
-                        value={responsibility}
-                        onChange={(e) =>
-                          handleArrayItemChange(
-                            "experience",
-                            "responsibilities",
-                            index,
-                            e.target.value,
-                            respIndex
-                          )
-                        }
+                        value={keyword}
                         margin="dense"
-                      />
-                      <IconButton
-                        onClick={() =>
-                          removeArrayItem(
-                            "experience",
-                            "responsibilities",
+                        onChange={(e) =>
+                          handleInputChange(
+                            e,
+                            "skills",
+                            skill.category,
                             index,
-                            respIndex
+                            subIndex
                           )
                         }
-                      >
+                      />
+                      <IconButton>
                         <CloseIcon />
                       </IconButton>
                     </Box>
                   ))}
-                  <Button
-                    onClick={() =>
-                      addArrayItem("experience", "responsibilities", index)
-                    }
-                  >
-                    Add Responsibility
-                  </Button>
+                  <Button>Add Skill</Button>
                 </AccordionDetails>
               </Accordion>
             ))}
           </Box>
         )}
-
         {activeTab === 3 && (
           <Box>
-            <Button onClick={addProject} sx={{ mb: 2 }}>
-              Add Project
-            </Button>
-
-            {editingResume.projects.map((project, index) => (
-              <Accordion key={project.id} defaultExpanded>
+            <Box>
+              <Button
+                sx={{ mb: 2 }}
+                onClick={() => addSectionData("workExperience")}
+              >
+                Add Experience
+              </Button>
+            </Box>
+            {editingResume.workExperience.map((experience, index) => (
+              <Accordion key={index}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>{project.name || "New Project"}</Typography>
+                  <Typography>
+                    {experience.company || "New Experience"}
+                  </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                    <IconButton onClick={() => removeProject(index)}>
+                    <IconButton
+                      onClick={() => deleteSectionData("workExperience", index)}
+                    >
                       <CloseIcon />
                     </IconButton>
                   </Box>
-
                   <Grid container spacing={2}>
                     <Grid size={{ xs: 12, sm: 6 }}>
                       <TextField
                         size="small"
                         fullWidth
-                        label="Project Name"
-                        value={project.name}
-                        onChange={(e) =>
-                          handleInputChange(e, "projects", "name", index)
-                        }
+                        label="Company"
+                        value={experience.company}
                         margin="normal"
+                        onChange={(e) =>
+                          handleInputChange(
+                            e,
+                            "workExperience",
+                            "company",
+                            index
+                          )
+                        }
                       />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6 }}>
                       <TextField
                         size="small"
                         fullWidth
-                        label="Date"
-                        value={project.date}
-                        onChange={(e) =>
-                          handleInputChange(e, "projects", "date", index)
-                        }
+                        label="Position"
+                        value={experience.position}
                         margin="normal"
+                        onChange={(e) =>
+                          handleInputChange(
+                            e,
+                            "workExperience",
+                            "position",
+                            index
+                          )
+                        }
                       />
                     </Grid>
-                    <Grid size={{ xs: 12 }}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <TextField
                         size="small"
                         fullWidth
-                        label="GitHub URL"
-                        value={project.github}
-                        onChange={(e) =>
-                          handleInputChange(e, "projects", "github", index)
-                        }
+                        label="Start Date"
+                        value={experience.startDate}
                         margin="normal"
+                        onChange={(e) =>
+                          handleInputChange(
+                            e,
+                            "workExperience",
+                            "startDate",
+                            index
+                          )
+                        }
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        label="End Date"
+                        value={experience.endDate}
+                        margin="normal"
+                        onChange={(e) =>
+                          handleInputChange(
+                            e,
+                            "workExperience",
+                            "endDate",
+                            index
+                          )
+                        }
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        label="Location"
+                        value={experience.location}
+                        margin="normal"
+                        onChange={(e) =>
+                          handleInputChange(
+                            e,
+                            "workExperience",
+                            "location",
+                            index
+                          )
+                        }
                       />
                     </Grid>
                   </Grid>
-
                   <Typography variant="h6" sx={{ mt: 2 }}>
-                    Technologies
+                    Highlights
                   </Typography>
-                  {project.technologies.map((technology, techIndex) => (
+                  {experience.highlights.map((highlight, subIndex) => (
                     <Box
-                      key={techIndex}
-                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                    >
-                      <TextField
-                        size="small"
-                        fullWidth
-                        value={technology}
-                        onChange={(e) =>
-                          handleArrayItemChange(
-                            "projects",
-                            "technologies",
-                            index,
-                            e.target.value,
-                            techIndex
-                          )
-                        }
-                        margin="dense"
-                      />
-                      <IconButton
-                        onClick={() =>
-                          removeArrayItem(
-                            "projects",
-                            "technologies",
-                            index,
-                            techIndex
-                          )
-                        }
-                      >
-                        <CloseIcon />
-                      </IconButton>
-                    </Box>
-                  ))}
-                  <Button
-                    onClick={() =>
-                      addArrayItem("projects", "technologies", index)
-                    }
-                  >
-                    Add Technology
-                  </Button>
-
-                  <Typography variant="h6" sx={{ mt: 2 }}>
-                    Description
-                  </Typography>
-                  {project.description.map((desc, descIndex) => (
-                    <Box
-                      key={descIndex}
+                      key={subIndex}
                       sx={{ display: "flex", alignItems: "center", mb: 1 }}
                     >
                       <TextField
                         size="small"
                         fullWidth
                         multiline
-                        value={desc}
-                        onChange={(e) =>
-                          handleArrayItemChange(
-                            "projects",
-                            "description",
-                            index,
-                            e.target.value,
-                            descIndex
-                          )
-                        }
+                        value={highlight}
                         margin="dense"
-                      />
-                      <IconButton
-                        onClick={() =>
-                          removeArrayItem(
-                            "projects",
-                            "description",
+                        onChange={(e) =>
+                          handleInputChange(
+                            e,
+                            "workExperience",
+                            "location",
                             index,
-                            descIndex
+                            subIndex
                           )
                         }
-                      >
+                      />
+                      <IconButton>
                         <CloseIcon />
                       </IconButton>
                     </Box>
                   ))}
-                  <Button
-                    onClick={() =>
-                      addArrayItem("projects", "description", index)
-                    }
-                  >
-                    Add Description Point
-                  </Button>
+                  <Button>Add Responsibility</Button>
                 </AccordionDetails>
               </Accordion>
             ))}
           </Box>
         )}
-
         {activeTab === 4 && (
+          <Box>
+            <Box>
+              <Button sx={{ mb: 2 }} onClick={() => addSectionData("projects")}>
+                Add Project
+              </Button>
+            </Box>
+            {editingResume.projects.map((project, index) => (
+              <Accordion key={index}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography>{project.name || "New Experience"}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                    <IconButton
+                      onClick={() => deleteSectionData("projects", index)}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Box>
+                  <Grid container spacing={2}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        label="Title"
+                        value={project.name}
+                        margin="normal"
+                        onChange={(e) =>
+                          handleInputChange(e, "projects", "name", index)
+                        }
+                      />
+                    </Grid>
+
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        label="Repositry Url"
+                        value={project.url}
+                        margin="normal"
+                        onChange={(e) =>
+                          handleInputChange(e, "projects", "url", index)
+                        }
+                      />
+                    </Grid>
+                  </Grid>
+                  <TextField
+                    id="outlined-multiline-flexible"
+                    label="Summary"
+                    fullWidth
+                    value={project.summary}
+                    size="small"
+                    multiline
+                    maxRows={4}
+                    margin="normal"
+                    onChange={(e) =>
+                      handleInputChange(e, "projects", "summary", index)
+                    }
+                  />
+                  <Typography variant="h6" sx={{ mt: 2 }}>
+                    Highlights
+                  </Typography>
+                  {project.highlights.map((highlight, subIndex) => (
+                    <Box
+                      key={subIndex}
+                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                    >
+                      <TextField
+                        size="small"
+                        fullWidth
+                        multiline
+                        value={highlight}
+                        margin="dense"
+                        onChange={(e) =>
+                          handleInputChange(
+                            e,
+                            "projects",
+                            "highlights",
+                            index,
+                            subIndex
+                          )
+                        }
+                      />
+                      <IconButton>
+                        <CloseIcon />
+                      </IconButton>
+                    </Box>
+                  ))}
+                  <Button>Add Responsibility</Button>
+                </AccordionDetails>
+              </Accordion>
+            ))}
+          </Box>
+        )}
+        {activeTab === 5 && (
           <Box>
             <Typography variant="h6" sx={{ mb: 2 }}>
               Achievements
@@ -1134,25 +1092,24 @@ const ResumeBuilder = () => {
                   size="small"
                   fullWidth
                   multiline
-                  value={achievement}
+                  value={achievement.description}
                   onChange={(e) =>
-                    handleInputChange(e, "achievements", "", index)
+                    handleInputChange(e, "achievements", "discrption", index)
                   }
                   margin="dense"
                 />
                 <IconButton
-                  onClick={() => removeArrayItem("achievements", "", index, 0)}
+                  onClick={() => deleteSectionData("achievements", index)}
                 >
                   <CloseIcon />
                 </IconButton>
               </Box>
             ))}
-            <Button onClick={() => addArrayItem("achievements", "")}>
+            <Button onClick={() => addSectionData("achievements")}>
               Add Achievement
             </Button>
           </Box>
         )}
-
         <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
           <Button
             variant="contained"
@@ -1195,7 +1152,7 @@ const ResumeBuilder = () => {
 
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
           {resumes &&
-            resumes.map((resume: ResumeDataCreate) => (
+            resumes.map((resume: ResumeSchema) => (
               <Card
                 key={resume.id}
                 sx={{
@@ -1218,7 +1175,7 @@ const ResumeBuilder = () => {
                     {resume.job_role}
                   </Typography>
                   <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                    {resume.personal_info.name}
+                    {resume.basics.name}
                   </Typography>
                 </CardContent>
                 <CardActions>
@@ -1264,9 +1221,6 @@ const ResumeBuilder = () => {
           </Paper>
         ) : (
           selectedResume && renderResumeView()
-          // <>
-          //   <Typography variant="h6">Resume Details</Typography>
-          // </>
         )}
       </Box>
 
