@@ -1,97 +1,18 @@
 {
-  "meta": {
-    "jobId": "UNIQUE_JOB_ID_12345",
-    "datePosted": "YYYY-MM-DD",
-    "validThrough": "YYYY-MM-DD", // Expiration date of the posting
-    "source": "Company Careers Page" // e.g., LinkedIn, Indeed, etc.
-  },
-  "company": {
-    "name": "Company Name",
-    "description": "A brief, compelling description of the company, its mission, and culture.",
-    "website": "https://company-website.com",
-    "logoUrl": "https://company-website.com/logo.png",
-    "industry": "e.g., Technology, SaaS, Healthcare, Finance",
-    "socialProfiles": [
-      {
-        "network": "LinkedIn",
-        "url": "https://linkedin.com/company/company-name"
-      }
-    ]
-  },
-  "jobDetails": {
-    "title": "Job Title",
-    "summary": "A short, engaging paragraph to catch the candidate's attention. This is the elevator pitch for the role.",
-    "description": "The full, detailed description of the job, the team, and what a typical day might look like. Can include markdown for formatting.",
-    "responsibilities": [
-      "Develop and maintain web applications using modern JavaScript frameworks.",
-      "Collaborate with cross-functional teams to define and design new features.",
-      "Troubleshoot, debug, and upgrade existing software.",
-      "Write clean, scalable, and well-documented code."
-    ],
-    "reportsTo": "Title of Manager (e.g., Engineering Manager)",
-    "team": "Brief description of the team the candidate will join (e.g., Front-end, Product, etc.).",
-    "employmentType": ["FULL_TIME"], // Can be one or more: FULL_TIME, PART_TIME, CONTRACT, INTERNSHIP, TEMPORARY
-    "experienceLevel": "JUNIOR", // e.g., INTERN, JUNIOR, MID_LEVEL, SENIOR, LEAD, MANAGER, DIRECTOR
-    "location": {
-      "type": "REMOTE", // ON_SITE, HYBRID, REMOTE
-      "remotePolicy": "This position is fully remote within India.", // A string to describe remote/hybrid policies
-      "address": {
-        // Only needed for ON_SITE or HYBRID
-        "streetAddress": "123 Main St",
-        "city": "Anytown",
-        "state": "CA",
-        "postalCode": "90210",
-        "country": "USA"
-      }
-    }
-  },
+  "jobTitle": "",
+  "companyName": "",
+  "location": "",
+  "jobType": "Full-Time",
+  "jobSummary": "",
+  "coreResponsibilities": [],
   "qualifications": {
-    "required": {
-      "education": "Bachelor's degree in Computer Science or a related field.",
-      "experienceYears": 1, // Minimum years of experience
-      "skills": [
-        { "category": "Languages", "items": ["JavaScript", "HTML", "CSS"] },
-        {
-          "category": "Soft Skills",
-          "items": ["Problem-Solving", "Team Collaboration"]
-        }
-      ]
-    },
-    "preferred": {
-      "experience": "Experience with cloud platforms like AWS or Google Cloud.",
-      "skills": [
-        { "category": "Frameworks", "items": ["React", "Node.js", "Vue.js"] },
-        { "category": "Tools", "items": ["Git", "Docker", "Jira"] }
-      ]
-    },
-    "languages": [{ "language": "English", "proficiency": "Fluent" }]
+    "required": [],
+    "preferred": []
   },
-  "compensationAndBenefits": {
-    "salary": {
-      "currency": "INR", // ISO 4217 currency code
-      "min": 800000,
-      "max": 1200000,
-      "period": "YEARLY" // YEARLY, HOURLY
-    },
-    "equity": "Stock options available", // Or a boolean: true
-    "bonus": "Performance-based annual bonus",
-    "benefits": [
-      "Comprehensive health insurance",
-      "Flexible work hours",
-      "Paid time off",
-      "Professional development budget"
-    ]
+  "technicalSkills": {
+    "mustHave": [],
+    "niceToHave": []
   },
-  "applicationProcess": {
-    "howToApply": "Please apply through the link provided. Our team will review applications on a rolling basis.",
-    "applicationUrl": "https://careers.company-website.com/apply/job-id",
-    "contact": {
-      "name": "Hiring Manager Name",
-      "email": "careers@company.com"
-    },
-    "interviewProcess": "1. Initial HR Screening (30 mins) -> 2. Technical Interview with Team Lead (60 mins) -> 3. Final Round with Head of Engineering (45 mins)"
-  },
-  "legal": {
-    "eeoStatement": "Company Name is an equal opportunity employer. We celebrate diversity and are committed to creating an inclusive environment for all employees."
-  }
+  "softSkills": [],
+  "keywords": []
 }

@@ -1,37 +1,32 @@
 // src/pages/JobAnalysis/hooks/useJobAnalysis.ts
 import { useState } from "react";
-import {
-  analyzeJobDescription,
-  type JobAnalysisRequest,
-  type JobAnalysisResponse,
-} from "../../../services/jobAnalysisService";
-import { type JobDescription } from "../../../store/schema/job.schema.ts";
 import { extractJobInformation, jobAnalysis } from "../../../gemini/system.ts";
-import type { ResumeDataCreate } from "../../../store/schema/resume.schema.ts";
-import type { JobAnalysisResult } from "../../../store/schema/result.schema.ts";
+import type { JobDescription } from "../../../schema/types/jd.types.ts";
+import type { ResumeAnalysisOutput } from "../../../schema/types/result.types.ts";
+import type { ResumeSchema } from "../../../schema/types/resume.types.ts";
 
 const initialJobData: JobDescription = {
-  job_title: "",
-  company_name: "",
+  jobTitle: "",
+  companyName: "",
   location: "",
-  employment_type: "Full-time",
-  job_description: "",
-  responsibilities: [],
-  qualifications: [],
-  skills_analysis: {
+  jobType: "Unknown",
+  jobSummary: "",
+  coreResponsibilities: [],
+  qualifications: {
     required: [],
     preferred: [],
-    nicetohave: [],
   },
-  salary_range: {
-    min_salary: 0,
-    max_salary: 0,
+  technicalSkills: {
+    mustHave: [],
+    niceToHave: [],
   },
+  softSkills: [],
+  keywords: [],
 };
 
 const useJobAnalysis = () => {
   const [showResult, setShowResult] = useState(false);
-  const [result, setResult] = useState<JobAnalysisResult | null>(null);
+  const [result, setResult] = useState<ResumeAnalysisOutput | null>(null);
   const [jobInfo, setJobInfo] = useState<JobDescription>(initialJobData);
   const [extracting, setExtracting] = useState(false);
   const [analysing, setAnalysing] = useState(false);
@@ -53,10 +48,7 @@ const useJobAnalysis = () => {
     setExtracting(false);
   };
 
-  const analyzeJob = async (
-    jobInfo: JobDescription,
-    resume: ResumeDataCreate
-  ) => {
+  const analyzeJob = async (jobInfo: JobDescription, resume: ResumeSchema) => {
     setAnalysing(true);
     setError(null);
 
@@ -85,6 +77,7 @@ const useJobAnalysis = () => {
   };
 
   const resetAnalysis = () => {
+    setShowResult(false);
     setResult(null);
     setError(null);
   };

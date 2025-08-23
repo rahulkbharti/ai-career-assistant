@@ -9,6 +9,7 @@ import {
   Button,
   IconButton,
   Typography,
+  Box,
 } from "@mui/material";
 import {
   ExpandMore as ExpandMoreIcon,
@@ -46,13 +47,13 @@ const EducationTab: React.FC<EducationTabProps> = ({
             <Typography>{edu.institution || "New Education"}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Box style={{ display: "flex", justifyContent: "flex-end" }}>
               <IconButton onClick={() => onDelete("education", index)}>
                 <CloseIcon />
               </IconButton>
-            </div>
+            </Box>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -64,7 +65,7 @@ const EducationTab: React.FC<EducationTabProps> = ({
                   margin="normal"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -74,7 +75,7 @@ const EducationTab: React.FC<EducationTabProps> = ({
                   margin="normal"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -86,7 +87,7 @@ const EducationTab: React.FC<EducationTabProps> = ({
                   margin="normal"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -98,7 +99,7 @@ const EducationTab: React.FC<EducationTabProps> = ({
                   margin="normal"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -110,7 +111,7 @@ const EducationTab: React.FC<EducationTabProps> = ({
                   margin="normal"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -120,7 +121,7 @@ const EducationTab: React.FC<EducationTabProps> = ({
                   margin="normal"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   size="small"
                   fullWidth

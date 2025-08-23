@@ -37,6 +37,7 @@ import {
 } from "@mui/icons-material";
 import { getJobApplications } from "../../services/jobAnalysisService";
 import type { JobApplication } from "../../services/jobAnalysisService";
+import SuggestionComponent from "./test";
 
 // Stats card component
 interface StatsCardProps {
@@ -411,7 +412,7 @@ const Dashboard: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         Dashboard
       </Typography>
-
+      <SuggestionComponent />
       {error && (
         <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
           {error}

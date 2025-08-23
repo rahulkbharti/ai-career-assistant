@@ -35,7 +35,7 @@ const ResumeView: React.FC<ResumeViewProps> = ({ resume }) => {
         Contact Information
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <Typography>
             <strong>Address:</strong> {resume.basics.location.city},{" "}
             {resume.basics.location.region},{" "}
@@ -43,17 +43,17 @@ const ResumeView: React.FC<ResumeViewProps> = ({ resume }) => {
             {resume.basics.location.postalCode}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <Typography>
             <strong>Phone:</strong> {resume.basics.phone}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <Typography>
             <strong>Email:</strong> {resume.basics.email}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <Typography>
             <strong>LinkedIn:</strong>{" "}
             {
@@ -63,7 +63,7 @@ const ResumeView: React.FC<ResumeViewProps> = ({ resume }) => {
             }
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <Typography>
             <strong>GitHub:</strong>{" "}
             {
@@ -110,7 +110,7 @@ const ResumeView: React.FC<ResumeViewProps> = ({ resume }) => {
       </Typography>
       <Grid container spacing={2}>
         {resume.skills.map((skill, index) => (
-          <Grid item xs={12} sm={6} key={index}>
+          <Grid size={{ xs: 12, sm: 6 }} key={index}>
             <Typography>
               <strong>{skill.category}:</strong>{" "}
               {skill.keywords.map((keyword, i) => (

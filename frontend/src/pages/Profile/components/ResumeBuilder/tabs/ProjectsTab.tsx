@@ -67,13 +67,13 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({
             <Typography>{project.name || "New Project"}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Box style={{ display: "flex", justifyContent: "flex-end" }}>
               <IconButton onClick={() => onDelete("projects", index)}>
                 <CloseIcon />
               </IconButton>
-            </div>
+            </Box>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -83,7 +83,7 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({
                   onChange={(e) => onInputChange(e, "projects", "name", index)}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -95,7 +95,7 @@ const ProjectsTab: React.FC<ProjectsTabProps> = ({
                   }
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   size="small"
                   fullWidth

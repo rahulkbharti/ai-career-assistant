@@ -50,7 +50,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
         Personal Information
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             size="small"
             fullWidth
@@ -60,7 +60,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
             margin="normal"
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             size="small"
             fullWidth
@@ -70,7 +70,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
             margin="normal"
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             size="small"
             fullWidth
@@ -80,7 +80,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
             margin="normal"
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             size="small"
             fullWidth
@@ -90,7 +90,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
             margin="normal"
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <TextField
             size="small"
             fullWidth
@@ -106,7 +106,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
       </Typography>
       <Grid container spacing={2}>
         {resume.basics.profiles.map((profile, index) => (
-          <Grid item key={index} xs={12} sm={6}>
+          <Grid key={index} size={{ xs: 12, md: 6 }}>
             <TextField
               size="small"
               fullWidth
@@ -122,7 +122,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
         Address
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <TextField
             size="small"
             fullWidth
@@ -132,7 +132,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
             margin="normal"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <TextField
             size="small"
             fullWidth
@@ -142,7 +142,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
             margin="normal"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <TextField
             size="small"
             fullWidth
@@ -152,7 +152,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
             margin="normal"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <TextField
             size="small"
             fullWidth

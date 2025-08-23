@@ -16,6 +16,161 @@ import JobDescriptionForm from "./components/JobDescriptionForm/JobDescriptionFo
 import useJobAnalysis from "./hooks/useJobAnalysis";
 import AnalysisResult from "./components/AnalysisResult/AnalysisResult";
 
+import type { ResumeSchema } from "../../schema/types/resume.types";
+import ResumeAnalysis from "./Result";
+import Result from "./components/AnalysisResult/test";
+
+const emptyResume: ResumeSchema = {
+  id: "master",
+  name: "Master Resume",
+  job_role: "Software Engineer",
+  basics: {
+    name: "Alex Johnson",
+    label: "Full Stack Developer",
+    email: "alex.johnson@example.com",
+    phone: "555-123-4567",
+    location: {
+      city: "San Francisco",
+      region: "CA",
+      countryCode: "US",
+      postalCode: "94105",
+    },
+    website: "https://alexjohnson.dev",
+    profiles: [
+      {
+        network: "LinkedIn",
+        username: "alexjohnson",
+        url: "https://linkedin.com/in/alexjohnson",
+      },
+      {
+        network: "GitHub",
+        username: "alexjdev",
+        url: "https://github.com/alexjdev",
+      },
+    ],
+  },
+  summary:
+    "Experienced full stack developer with a passion for building scalable web applications and working with modern JavaScript frameworks.",
+  workExperience: [
+    {
+      company: "Tech Solutions Inc.",
+      position: "Frontend Developer",
+      location: "San Francisco, CA",
+      startDate: "2021-06-01",
+      endDate: "2023-05-31",
+      summary:
+        "Developed and maintained user interfaces for SaaS products using React and TypeScript.",
+      highlights: [
+        "Implemented a reusable component library in React.",
+        "Improved application performance by 30% through code optimization.",
+      ],
+      keywords: [],
+    },
+    {
+      company: "Innovatech",
+      position: "Software Engineer Intern",
+      location: "Remote",
+      startDate: "2020-06-01",
+      endDate: "2020-08-31",
+      summary: "Assisted in backend API development and database design.",
+      highlights: [
+        "Built RESTful APIs with Node.js and Express.",
+        "Wrote unit tests to ensure code quality.",
+      ],
+      keywords: [],
+    },
+  ],
+  education: [
+    {
+      institution: "University of California, Berkeley",
+      area: "Computer Science",
+      studyType: "Bachelor",
+      startDate: "2017-09-01",
+      endDate: "2021-05-31",
+      gpa: "3.8",
+      courses: ["CS61A", "CS61B", "CS170"],
+    },
+  ],
+  skills: [
+    {
+      category: "JavaScript",
+      keywords: ["ES6", "React", "Node.js"],
+    },
+    {
+      category: "TypeScript",
+      keywords: ["Types", "Generics"],
+    },
+    {
+      category: "Python",
+      keywords: ["Flask", "Data Analysis"],
+    },
+  ],
+  projects: [
+    {
+      name: "Personal Portfolio",
+      summary:
+        "A responsive portfolio website built with React and Material-UI.",
+      technologies: ["React", "Material-UI"],
+      highlights: ["Showcases projects and blogs.", "Deployed using Netlify."],
+      url: "https://alexjohnson.dev",
+      repository: "",
+    },
+    {
+      name: "Task Manager API",
+      summary:
+        "RESTful API for managing tasks, built with Node.js and MongoDB.",
+      technologies: ["Node.js", "MongoDB"],
+      highlights: [
+        "JWT authentication and CRUD operations.",
+        "Comprehensive test coverage.",
+      ],
+      url: "https://github.com/alexjdev/task-manager-api",
+      repository: "https://github.com/alexjdev/task-manager-api",
+    },
+  ],
+  achievements: [
+    {
+      title: "Winner, Hackathon 2022",
+      date: "2022-11-15",
+      description: "Led a team to develop an AI-powered job matching platform.",
+      url: "",
+    },
+  ],
+  certifications: [
+    {
+      name: "AWS Certified Developer – Associate",
+      date: "2023-03-01",
+      issuer: "Amazon Web Services",
+      url: "",
+    },
+  ],
+  languages: [
+    {
+      language: "English",
+      fluency: "Native",
+    },
+    {
+      language: "Spanish",
+      fluency: "Professional working proficiency",
+    },
+  ],
+  interests: [
+    {
+      name: "Open Source",
+      keywords: ["Contributing", "Community"],
+    },
+    {
+      name: "Cycling",
+      keywords: ["Road biking", "Fitness"],
+    },
+  ],
+  references: [
+    {
+      note: "Alex is a dedicated developer who consistently delivers high-quality work.",
+    },
+  ],
+};
+
 const JobAnalysis: React.FC = () => {
   const {
     result,
@@ -27,6 +182,7 @@ const JobAnalysis: React.FC = () => {
     extractJobInfo,
     analyzeJob,
     error,
+    resetAnalysis,
   } = useJobAnalysis();
 
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
@@ -71,7 +227,7 @@ const JobAnalysis: React.FC = () => {
       ) : (
         <>
           <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-            <Button variant="outlined" sx={{ mr: 1 }}>
+            <Button variant="outlined" onClick={resetAnalysis} sx={{ mr: 1 }}>
               Analyze Another Job
             </Button>
             <Button

@@ -46,7 +46,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
   onDeleteKeyword,
 }) => {
   return (
-    <div>
+    <Box>
       <Button sx={{ mb: 2 }} onClick={onAdd}>
         Add Skill Category
       </Button>
@@ -63,11 +63,11 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
             />
           </AccordionSummary>
           <AccordionDetails>
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Box style={{ display: "flex", justifyContent: "flex-end" }}>
               <IconButton onClick={() => onDelete("skills", index)}>
                 <CloseIcon />
               </IconButton>
-            </div>
+            </Box>
 
             <Typography variant="h6" sx={{ mt: 2 }}>
               Skills
@@ -104,7 +104,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({
           </AccordionDetails>
         </Accordion>
       ))}
-    </div>
+    </Box>
   );
 };
 

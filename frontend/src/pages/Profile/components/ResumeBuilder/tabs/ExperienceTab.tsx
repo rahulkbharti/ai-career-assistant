@@ -57,13 +57,13 @@ const ExperienceTab: React.FC<ExperienceTabProps> = ({
             <Typography>{experience.company || "New Experience"}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Box style={{ display: "flex", justifyContent: "flex-end" }}>
               <IconButton onClick={() => onDelete("workExperience", index)}>
                 <CloseIcon />
               </IconButton>
-            </div>
+            </Box>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -75,7 +75,7 @@ const ExperienceTab: React.FC<ExperienceTabProps> = ({
                   }
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -87,7 +87,7 @@ const ExperienceTab: React.FC<ExperienceTabProps> = ({
                   }
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -99,7 +99,7 @@ const ExperienceTab: React.FC<ExperienceTabProps> = ({
                   }
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -111,7 +111,7 @@ const ExperienceTab: React.FC<ExperienceTabProps> = ({
                   }
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   size="small"
                   fullWidth
@@ -123,7 +123,7 @@ const ExperienceTab: React.FC<ExperienceTabProps> = ({
                   }
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   size="small"
                   fullWidth

@@ -13,20 +13,12 @@ import {
   Card,
   CardContent,
   CardActions,
-  Chip,
-  Grid,
   Paper,
-  Divider,
   MenuItem,
   Tabs,
   Tab,
   IconButton,
   Alert,
-  List,
-  ListItem,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   FormControl,
   InputLabel,
   Select,
@@ -37,7 +29,6 @@ import {
   Delete as DeleteIcon,
   Visibility as ViewIcon,
   Save as SaveIcon,
-  ExpandMore as ExpandMoreIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
@@ -351,6 +342,7 @@ const ResumeBuilder = () => {
 
         switch (section) {
           case "education":
+            console.log("I am working ");
             updatedResume.education.push({
               institution: "",
               area: "",
@@ -594,7 +586,7 @@ const ResumeBuilder = () => {
   );
 
   const handleViewResume = useCallback(
-    (resume: ResumeSchema, e: React.MouseEvent) => {
+    (_resume: ResumeSchema, e: React.MouseEvent) => {
       e.stopPropagation();
       setViewDialogOpen(true);
     },

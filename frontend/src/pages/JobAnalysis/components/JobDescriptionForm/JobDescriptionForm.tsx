@@ -17,77 +17,21 @@ import {
   Tabs,
   Tab,
   Chip,
+  IconButton,
 } from "@mui/material";
 import {
   Description as DescriptionIcon,
   Work as WorkIcon,
   Business as BusinessIcon,
   Add as AddIcon,
+  Close as CloseIcon,
+  AutoAwesome,
 } from "@mui/icons-material";
 import type { JobAnalysisRequest } from "../../../../services/jobAnalysisService";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../../store/store";
-import type {
-  JobDescription,
-  SalaryRange,
-  SkillsAnalysis,
-} from "../../../../store/schema/job.schema";
-
-const ArrayInput: React.FC<{
-  items: string[];
-  onChange: (items: string[]) => void;
-  label: string;
-  placeholder: string;
-}> = ({ items, onChange, label, placeholder }) => {
-  const [newItem, setNewItem] = useState("");
-
-  const handleAddItem = () => {
-    if (newItem.trim()) {
-      onChange([...items, newItem.trim()]);
-      setNewItem("");
-    }
-  };
-
-  const handleRemoveItem = (index: number) => {
-    const newItems = [...items];
-    newItems.splice(index, 1);
-    onChange(newItems);
-  };
-
-  return (
-    <Box>
-      <Box display="flex" alignItems="center" gap={1} mb={2}>
-        <TextField
-          fullWidth
-          size="small"
-          value={newItem}
-          onChange={(e) => setNewItem(e.target.value)}
-          placeholder={placeholder}
-          onKeyPress={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleAddItem();
-            }
-          }}
-        />
-        <Button variant="contained" onClick={handleAddItem}>
-          <AddIcon />
-        </Button>
-      </Box>
-      <Box display="flex" flexWrap="wrap" gap={1}>
-        {items.map((item, index) => (
-          <Chip
-            key={index}
-            label={item}
-            onDelete={() => handleRemoveItem(index)}
-            color="primary"
-            variant="outlined"
-          />
-        ))}
-      </Box>
-    </Box>
-  );
-};
+import type { JobDescription } from "../../../../schema/types/jd.types";
+import type { ResumeSchema } from "../../../../schema/types/resume.types";
 
 interface JobDescriptionFormComponentProps {
   jobInfo: JobDescription;
@@ -95,7 +39,7 @@ interface JobDescriptionFormComponentProps {
   extracting: boolean;
   analysing: boolean;
   extractJobInfo: (desc: string) => void;
-  analyzeJob: (jobInfo: JobDescription, resume: any) => void;
+  analyzeJob: (jobInfo: JobDescription, resume: ResumeSchema) => void;
 }
 
 const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
@@ -114,25 +58,20 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
   const resumes = useSelector(
     (state: RootState) => state.resumes.resumes || []
   );
-
+  const handleJobAnalysis = () => {
+    if (resume === "empty") {
+      alert("Please select a resume.");
+      return;
+    }
+    const selectedResume = resumes.find((_resume) => _resume.id === resume);
+    if (!selectedResume) {
+      alert("Cannot find resume.");
+      return;
+    }
+    analyzeJob(jobInfo, selectedResume);
+  };
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (!jobDescription.trim()) {
-      setError("Please enter a job description");
-      return;
-    }
-
-    if (extracting) {
-      setError("Job description is already being analyzed");
-      return;
-    }
-    extractJobInfo(jobDescription.trim());
   };
 
   const handlePaste = async () => {
@@ -144,43 +83,114 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
     }
   };
 
-  const handleInputChange = (field: keyof JobDescription, value: any) => {
-    setJobInfo((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSkillsChange = (
-    category: keyof SkillsAnalysis,
-    skills: string[]
-  ) => {
-    setJobInfo((prev) => ({
-      ...prev,
-      skills_analysis: {
-        ...prev.skills_analysis,
-        [category]: skills,
-      },
-    }));
-  };
-
-  const handleSalaryChange = (field: keyof SalaryRange, value: number) => {
-    setJobInfo((prev) => ({
-      ...prev,
-      salary_range: {
-        ...prev.salary_range,
-        [field]: value,
-      },
-    }));
-  };
-
-  const handleAnalyzeJob = () => {
-    if (analysing) return;
-    const selectedResume = resumes.find((r) => r.id === resume);
-    if (selectedResume) {
-      analyzeJob(jobInfo, selectedResume);
-    } else {
-      alert("Select a resume to analyze against the job description");
+  const handleJobExtruction = () => {
+    if (!jobDescription) {
+      alert("Enter The Job Description");
+      return;
     }
+    extractJobInfo(jobDescription);
   };
 
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    section: string,
+    name: string,
+    index?: number
+  ) => {
+    const job = { ...jobInfo };
+    const value = e.target.value;
+    switch (section) {
+      case "coreResponsibilities":
+        if (typeof index === "number") job.coreResponsibilities[index] = value;
+        break;
+      case "qualifications":
+        if (typeof name === "string" && typeof index === "number")
+          if (name === "required") {
+            job.qualifications.required[index] = value;
+          } else {
+            job.qualifications.preferred[index] = value;
+          }
+        break;
+      case "technicalSkills":
+        if (typeof index === "number") {
+          if (name === "mustHave") {
+            job.technicalSkills.mustHave[index] = value;
+          } else {
+            job.technicalSkills.niceToHave[index] = value;
+          }
+        }
+        break;
+      case "softSkills":
+        if (typeof index === "number") job.softSkills[index] = value;
+        break;
+      case "keywords":
+        if (typeof index === "number") job.keywords[index] = value;
+        break;
+      default:
+        if (name === "jobTitle") job.jobTitle = value;
+        else if (name === "companyName") job.companyName = value;
+        else if (name === "location") job.location = value;
+        else if (name === "jobType")
+          job.jobType = value as JobDescription["jobType"];
+        else if (name === "jobSummary") job.jobSummary = value;
+        break;
+    }
+    setJobInfo(job);
+  };
+  const handleAddItem = (section: string, name?: string) => {
+    const job = { ...jobInfo };
+    switch (section) {
+      case "coreResponsibilities":
+        job.coreResponsibilities.push("");
+        break;
+      case "qualifications":
+        if (name === "required" || name === "preferred")
+          job.qualifications[name].push("");
+        break;
+      case "technicalSkills":
+        if (name === "mustHave" || name === "niceToHave")
+          job.technicalSkills[name].push("");
+        break;
+      case "softSkills":
+        job.softSkills.push("");
+        break;
+      case "keywords":
+        job.keywords.push("");
+        break;
+    }
+    setJobInfo(job);
+  };
+  const handleRemoveItem = (section: string, index: number, name?: string) => {
+    const job = { ...jobInfo };
+    switch (section) {
+      case "coreResponsibilities":
+        job.coreResponsibilities.splice(index, 1);
+        break;
+      case "qualifications":
+        if (name === "required") {
+          job.qualifications.required.splice(index, 1);
+        } else if (name === "preferred") {
+          job.qualifications.preferred.splice(index, 1);
+        }
+        break;
+      case "technicalSkills":
+        if (name === "mustHave") {
+          job.technicalSkills.mustHave.splice(index, 1);
+        } else if (name === "niceToHave") {
+          job.technicalSkills.niceToHave.splice(index, 1);
+        }
+        break;
+      case "softSkills":
+        job.softSkills.splice(index, 1);
+        break;
+      case "keywords":
+        job.keywords.splice(index, 1);
+        break;
+      default:
+        break;
+    }
+    setJobInfo(job);
+  };
   return (
     <Paper sx={{ p: 3, mb: 3 }}>
       <Typography
@@ -196,7 +206,7 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
         role and get tailored suggestions for your resume.
       </Typography>
 
-      <form onSubmit={handleSubmit}>
+      <Box>
         <Box sx={{ mt: 3 }}>
           <Box
             sx={{
@@ -239,26 +249,29 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
 
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
-            type="submit"
+            type="button"
             variant="contained"
             size="large"
             disabled={extracting || !jobDescription.trim()}
-            startIcon={extracting ? <CircularProgress size={16} /> : null}
+            startIcon={
+              extracting ? <CircularProgress size={16} /> : <AutoAwesome />
+            }
+            onClick={handleJobExtruction}
           >
             {extracting ? "Extracting..." : "Extract Job Description"}
           </Button>
         </Box>
-      </form>
-      {jobInfo.company_name && (
+      </Box>
+      {jobInfo && (
         <>
           <Box sx={{ mt: 3 }}>
-            <Tabs value={activeTab} onChange={handleTabChange} centered>
+            <Tabs value={activeTab} onChange={handleTabChange}>
               <Tab label="Basic Info" />
-              <Tab label="Description" />
               <Tab label="Responsibilities" />
               <Tab label="Qualifications" />
-              <Tab label="Skills Analysis" />
-              <Tab label="Salary" />
+              <Tab label="Technical Skills" />
+              <Tab label="Soft Skills" />
+              <Tab label="KeyWords" />
             </Tabs>
           </Box>
           <Box sx={{ py: 3 }}>
@@ -269,10 +282,8 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
                     size="small"
                     fullWidth
                     label="Job Role"
-                    value={jobInfo?.job_title}
-                    onChange={(e) =>
-                      handleInputChange("job_title", e.target.value)
-                    }
+                    value={jobInfo?.jobTitle}
+                    onChange={(e) => handleInputChange(e, "", "jobTitle")}
                     placeholder="e.g., Senior Frontend Developer"
                     InputProps={{
                       startAdornment: (
@@ -286,10 +297,8 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
                     size="small"
                     fullWidth
                     label="Company Name"
-                    value={jobInfo?.company_name}
-                    onChange={(e) =>
-                      handleInputChange("company_name", e.target.value)
-                    }
+                    value={jobInfo?.companyName}
+                    onChange={(e) => handleInputChange(e, "", "companyName")}
                     placeholder="e.g., Google, Microsoft"
                     InputProps={{
                       startAdornment: (
@@ -304,9 +313,7 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
                     fullWidth
                     label="Location"
                     value={jobInfo?.location}
-                    onChange={(e) =>
-                      handleInputChange("location", e.target.value)
-                    }
+                    onChange={(e) => handleInputChange(e, "", "location")}
                   />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
@@ -314,11 +321,9 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
                     <InputLabel>Employment Type</InputLabel>
                     <Select
                       size={"small"}
-                      value={jobInfo?.employment_type}
+                      value={jobInfo?.jobType}
                       label="Employment Type"
-                      onChange={(e) =>
-                        handleInputChange("employment_type", e.target.value)
-                      }
+                      onChange={(e) => handleInputChange(e, "", "jobType")}
                     >
                       <MenuItem value="Full-time">Full-time</MenuItem>
                       <MenuItem value="Part-time">Part-time</MenuItem>
@@ -328,123 +333,283 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
                     </Select>
                   </FormControl>
                 </Grid>
-              </Grid>
-            )}
-
-            {activeTab === 1 && (
-              <TextField
-                fullWidth
-                multiline
-                rows={8}
-                label="Job Description"
-                value={jobInfo?.job_description}
-                onChange={(e) =>
-                  handleInputChange("job_description", e.target.value)
-                }
-              />
-            )}
-
-            {activeTab === 2 && (
-              <ArrayInput
-                items={jobInfo?.responsibilities}
-                onChange={(items) =>
-                  handleInputChange("responsibilities", items)
-                }
-                label="Responsibilities"
-                placeholder="Add a responsibility"
-              />
-            )}
-
-            {activeTab === 3 && (
-              <ArrayInput
-                items={jobInfo?.qualifications}
-                onChange={(items) => handleInputChange("qualifications", items)}
-                label="Qualifications"
-                placeholder="Add a qualification"
-              />
-            )}
-
-            {activeTab === 4 && (
-              <Grid container spacing={3}>
                 <Grid size={{ xs: 12 }}>
-                  <Typography variant="h6" gutterBottom>
-                    Required Skills
-                  </Typography>
-                  <ArrayInput
-                    items={jobInfo?.skills_analysis.required}
-                    onChange={(items) => handleSkillsChange("required", items)}
-                    label="Required Skills"
-                    placeholder="Add a required skill"
-                  />
-                </Grid>
-                <Grid size={{ xs: 12 }}>
-                  <Divider sx={{ my: 2 }} />
-                  <Typography variant="h6" gutterBottom>
-                    Preferred Skills
-                  </Typography>
-                  <ArrayInput
-                    items={jobInfo?.skills_analysis.preferred}
-                    onChange={(items) => handleSkillsChange("preferred", items)}
-                    label="Preferred Skills"
-                    placeholder="Add a preferred skill"
-                  />
-                </Grid>
-                <Grid size={{ xs: 12 }}>
-                  <Divider sx={{ my: 2 }} />
-                  <Typography variant="h6" gutterBottom>
-                    Nice-to-Have Skills
-                  </Typography>
-                  <ArrayInput
-                    items={jobInfo?.skills_analysis.nicetohave}
-                    onChange={(items) =>
-                      handleSkillsChange("nicetohave", items)
-                    }
-                    label="Nice-to-Have Skills"
-                    placeholder="Add a nice-to-have skill"
-                  />
-                </Grid>
-              </Grid>
-            )}
-
-            {activeTab === 5 && (
-              <Grid container spacing={3}>
-                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
-                    size={"small"}
+                    label="Job Summary"
                     fullWidth
-                    type="number"
-                    label="Minimum Salary"
-                    value={jobInfo?.salary_range.min_salary}
-                    onChange={(e) =>
-                      handleSalaryChange(
-                        "min_salary",
-                        parseFloat(e.target.value)
-                      )
-                    }
-                    InputProps={{
-                      inputProps: { min: 0, step: 0.01 },
-                    }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    size={"small"}
-                    fullWidth
-                    type="number"
-                    label="Maximum Salary"
-                    value={jobInfo?.salary_range.max_salary}
-                    onChange={(e) =>
-                      handleSalaryChange(
-                        "max_salary",
-                        parseFloat(e.target.value)
-                      )
-                    }
-                    InputProps={{
-                      inputProps: { min: 0, step: 0.01 },
-                    }}
+                    multiline
+                    rows={3}
+                    value={jobInfo?.jobSummary}
+                    onChange={(e) => handleInputChange(e, "", "jobSummary")}
                   />
                 </Grid>
               </Grid>
+            )}
+            {activeTab == 1 && (
+              <Box>
+                {jobInfo.coreResponsibilities.map((responce, index) => (
+                  <Box
+                    key={index}
+                    sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                  >
+                    <TextField
+                      size="small"
+                      fullWidth
+                      multiline
+                      placeholder="Responsibilty"
+                      value={responce}
+                      margin="dense"
+                      onChange={(e) =>
+                        handleInputChange(e, "coreResponsibilities", "", index)
+                      }
+                    />
+                    <IconButton
+                      onClick={() =>
+                        handleRemoveItem("coreResponsibilities", index)
+                      }
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Box>
+                ))}
+                <Button
+                  sx={{ mb: 2 }}
+                  onClick={() => handleAddItem("coreResponsibilities")}
+                >
+                  Add Responsibilities
+                </Button>
+              </Box>
+            )}
+            {activeTab == 2 && (
+              <Box>
+                <Typography variant="h6">Required Qualifications</Typography>
+                {jobInfo.qualifications.required.map((qualification, index) => (
+                  <Box
+                    key={index}
+                    sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                  >
+                    <TextField
+                      size="small"
+                      fullWidth
+                      multiline
+                      placeholder="Required Qualification"
+                      value={qualification}
+                      margin="dense"
+                      onChange={(e) =>
+                        handleInputChange(
+                          e,
+                          "qualifications",
+                          "required",
+                          index
+                        )
+                      }
+                    />
+                    <IconButton
+                      onClick={() =>
+                        handleRemoveItem("qualifications", index, "required")
+                      }
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Box>
+                ))}
+                <Button
+                  sx={{ mb: 2 }}
+                  onClick={() => handleAddItem("qualifications", "required")}
+                >
+                  {" "}
+                  Add Qualification
+                </Button>
+                <Typography variant="h6">Prfered Qulifications</Typography>
+                {jobInfo.qualifications.preferred.map(
+                  (qualification, index) => (
+                    <Box
+                      key={index}
+                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                    >
+                      <TextField
+                        size="small"
+                        fullWidth
+                        multiline
+                        placeholder="Prefered Qualification"
+                        value={qualification}
+                        margin="dense"
+                        onChange={(e) =>
+                          handleInputChange(
+                            e,
+                            "qualifications",
+                            "preferred",
+                            index
+                          )
+                        }
+                      />
+                      <IconButton
+                        onClick={() =>
+                          handleRemoveItem("qualifications", index, "preferred")
+                        }
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </Box>
+                  )
+                )}
+                <Button
+                  sx={{ mb: 2 }}
+                  onClick={() => handleAddItem("qualifications", "preferred")}
+                >
+                  Add Qualification
+                </Button>
+              </Box>
+            )}
+            {activeTab == 3 && (
+              <Box>
+                <Typography variant="h6">Required Skills</Typography>
+                {jobInfo.technicalSkills.mustHave.map((skill, index) => (
+                  <Box
+                    key={index}
+                    sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                  >
+                    <TextField
+                      size="small"
+                      fullWidth
+                      multiline
+                      placeholder="Must Have Skill"
+                      value={skill}
+                      margin="dense"
+                      onChange={(e) =>
+                        handleInputChange(
+                          e,
+                          "technicalSkills",
+                          "mustHave",
+                          index
+                        )
+                      }
+                    />
+                    <IconButton
+                      onClick={() =>
+                        handleRemoveItem("technicalSkills", index, "mustHave")
+                      }
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Box>
+                ))}
+                <Button
+                  sx={{ mb: 2 }}
+                  onClick={() => handleAddItem("technicalSkills", "mustHave")}
+                >
+                  Add Skill
+                </Button>
+                <Typography variant="h6">Prfered Skills</Typography>
+                {jobInfo.technicalSkills.niceToHave.map(
+                  (qualification, index) => (
+                    <Box
+                      key={index}
+                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                    >
+                      <TextField
+                        size="small"
+                        fullWidth
+                        multiline
+                        placeholder="Nice To Have Skill"
+                        value={qualification}
+                        margin="dense"
+                        onChange={(e) =>
+                          handleInputChange(
+                            e,
+                            "technicalSkills",
+                            "niceToHave",
+                            index
+                          )
+                        }
+                      />
+                      <IconButton
+                        onClick={() =>
+                          handleRemoveItem(
+                            "technicalSkills",
+                            index,
+                            "niceToHave"
+                          )
+                        }
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </Box>
+                  )
+                )}
+                <Button
+                  sx={{ mb: 2 }}
+                  onClick={() => handleAddItem("technicalSkills", "niceToHave")}
+                >
+                  Add Skill
+                </Button>
+              </Box>
+            )}
+            {activeTab == 4 && (
+              <Box>
+                {jobInfo.softSkills.map((skill, index) => (
+                  <Box
+                    key={index}
+                    sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                  >
+                    <TextField
+                      size="small"
+                      fullWidth
+                      multiline
+                      placeholder="Soft Skill"
+                      value={skill}
+                      margin="dense"
+                      onChange={(e) =>
+                        handleInputChange(e, "softSkills", "", index)
+                      }
+                    />
+                    <IconButton
+                      onClick={() => handleRemoveItem("softSkills", index)}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Box>
+                ))}
+                <Button
+                  sx={{ mb: 2 }}
+                  onClick={() => handleAddItem("softSkills", "")}
+                >
+                  Add Skill
+                </Button>
+              </Box>
+            )}
+            {activeTab == 5 && (
+              <Box>
+                {jobInfo.keywords.map((keyword, index) => (
+                  <Box
+                    key={index}
+                    sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                  >
+                    <TextField
+                      size="small"
+                      fullWidth
+                      multiline
+                      placeholder="keyword"
+                      value={keyword}
+                      margin="dense"
+                      onChange={(e) =>
+                        handleInputChange(e, "keywords", "", index)
+                      }
+                    />
+                    <IconButton
+                      onClick={() => handleRemoveItem("keywords", index)}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Box>
+                ))}
+                <Button
+                  sx={{ mb: 2 }}
+                  onClick={() => handleAddItem("keywords", "")}
+                >
+                  Add Keyword
+                </Button>
+              </Box>
             )}
           </Box>
           <Divider sx={{ my: 3 }} />
@@ -471,9 +636,11 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
               type="button"
               variant="contained"
               size="large"
-              onClick={handleAnalyzeJob}
-              disabled={analysing || !jobInfo.job_description.trim()}
-              startIcon={analysing ? <CircularProgress size={16} /> : null}
+              onClick={handleJobAnalysis}
+              disabled={analysing}
+              startIcon={
+                analysing ? <CircularProgress size={16} /> : <AutoAwesome />
+              }
             >
               {analysing ? "Analyzing..." : "Analyze Job Description"}
             </Button>

@@ -16,21 +16,45 @@ import {
   CircularProgress,
   Divider,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import EditIcon from "@mui/icons-material/Edit";
 import FlagIcon from "@mui/icons-material/Flag";
 import BuildIcon from "@mui/icons-material/Build";
-import type {
-  ActionItem,
-  KeywordAnalysis,
-  ResumeAnalysisOutput,
-  SectionFeedback,
-  SkillAnalysis,
-} from "../../../../schema/types/result.types";
-import type { JobAnalysisResult } from "../../../../store/schema/result.schema";
+
+// --- TypeScript Interfaces (from your schema) ---
+
+interface KeywordAnalysis {
+  matchedKeywords: string[];
+  missingKeywords: string[];
+  suggestions: string;
+}
+
+interface SectionFeedback {
+  sectionName:
+    | "Professional Summary"
+    | "Work Experience"
+    | "Skills"
+    | "Education"
+    | "Projects";
+  analysis: string;
+  suggestions: string[];
+}
+
+interface ActionItem {
+  priority: "High" | "Medium" | "Low";
+  action: string;
+}
+
+interface ResumeAnalysisOutput {
+  overallMatchScore: number;
+  analysisSummary: string;
+  keywordAnalysis: KeywordAnalysis;
+  sectionBreakdown: SectionFeedback[];
+  actionPlan: ActionItem[];
+}
 
 // --- Sample Data ---
 
@@ -38,19 +62,8 @@ const exampleAnalysis: ResumeAnalysisOutput = {
   overallMatchScore: 65,
   analysisSummary:
     "Your resume shows strong foundational experience but needs to be more closely aligned with the specific requirements of the Senior Product Manager role. Key areas for improvement include quantifying achievements and integrating specific keywords from the job description.",
-  skillAnalysis: {
-    matchedSkills: ["Reactjs", "nodejs"],
-    missingSkills: [
-      "B2B SaaS",
-      "Stakeholder Management",
-      "Market Analysis",
-      "JIRA",
-    ],
-    suggestions:
-      "Integrate missing keywords like 'B2B SaaS' and 'Stakeholder Management' into your work experience bullet points. For example, 'Led a cross-functional team to launch a new B2B SaaS product...'.",
-  },
   keywordAnalysis: {
-    matchedKeywords: ["Product Management", "Agile", "Roadmap", "REST APIs"],
+    matchedKeywords: ["Product Management", "Agile", "Roadmap"],
     missingKeywords: [
       "B2B SaaS",
       "Stakeholder Management",
@@ -98,6 +111,77 @@ const exampleAnalysis: ResumeAnalysisOutput = {
     },
   ],
 };
+
+// --- Material You Inspired Theme ---
+const theme = createTheme({
+  palette: {
+    mode: "light",
+    primary: {
+      main: "#4A55A2",
+    },
+    secondary: {
+      main: "#7895CB",
+    },
+    background: {
+      default: "#F0F0F0",
+      paper: "#FFFFFF",
+    },
+    success: {
+      main: "#4CAF50",
+    },
+    error: {
+      main: "#F44336",
+    },
+  },
+  typography: {
+    fontFamily: "Roboto, sans-serif",
+    h4: {
+      fontWeight: 700,
+    },
+    h5: {
+      fontWeight: 600,
+    },
+    h6: {
+      fontWeight: 600,
+    },
+  },
+  components: {
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: "16px",
+          boxShadow: "0 8px 16px rgba(0,0,0,0.1)",
+          transition: "transform 0.3s ease-in-out",
+          "&:hover": {
+            transform: "translateY(-4px)",
+          },
+        },
+      },
+    },
+    MuiAccordion: {
+      styleOverrides: {
+        root: {
+          borderRadius: "12px",
+          boxShadow: "none",
+          border: "1px solid #e0e0e0",
+          "&:before": {
+            display: "none",
+          },
+          "&.Mui-expanded": {
+            margin: "8px 0",
+          },
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          borderRadius: "8px",
+        },
+      },
+    },
+  },
+});
 
 // --- Reusable Components ---
 
@@ -192,51 +276,6 @@ const KeywordAnalysisCard: React.FC<{ analysis: KeywordAnalysis }> = ({
     </CardContent>
   </StyledCard>
 );
-const SkillAnalysisCard: React.FC<{ analysis: SkillAnalysis }> = ({
-  analysis,
-}) => (
-  <StyledCard>
-    <CardContent>
-      <Typography variant="h6" gutterBottom>
-        Keyword Analysis
-      </Typography>
-      <Divider sx={{ my: 1 }} />
-      <Typography variant="subtitle1" sx={{ mt: 2 }}>
-        Matched Keywords
-      </Typography>
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
-        {analysis.matchedSkills.map((skill) => (
-          <Chip
-            key={skill}
-            label={skill}
-            color="success"
-            icon={<CheckCircleOutlineIcon />}
-          />
-        ))}
-      </Box>
-      <Typography variant="subtitle1" sx={{ mt: 3 }}>
-        Missing Keywords
-      </Typography>
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
-        {analysis.missingSkills.map((skill) => (
-          <Chip
-            key={skill}
-            label={skill}
-            color="error"
-            icon={<HighlightOffIcon />}
-            variant="outlined"
-          />
-        ))}
-      </Box>
-      <Typography variant="subtitle1" sx={{ mt: 3 }}>
-        Suggestion
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-        {analysis.suggestions}
-      </Typography>
-    </CardContent>
-  </StyledCard>
-);
 
 const SectionBreakdownAccordion: React.FC<{ sections: SectionFeedback[] }> = ({
   sections,
@@ -309,40 +348,31 @@ const ActionPlanList: React.FC<{ plan: ActionItem[] }> = ({ plan }) => {
 
 // --- Main App Component ---
 
-interface AnalysisResultProps {
-  result: ResumeAnalysisOutput;
-}
-
-const AnlysisResult: React.FC<AnalysisResultProps> = ({ result }) => {
-  // console.log(result);
+export default function Result() {
   return (
     <Box sx={{ backgroundColor: "background.default" }}>
       <Typography variant="h4" gutterBottom sx={{ textAlign: "center", mb: 4 }}>
         Resume Analysis Report
       </Typography>
       <Grid container spacing={4}>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid item xs={12} md={4}>
           <OverallScoreCard
-            score={result.overallMatchScore}
-            summary={result.analysisSummary}
+            score={exampleAnalysis.overallMatchScore}
+            summary={exampleAnalysis.analysisSummary}
           />
         </Grid>
-        <Grid size={{ xs: 12, md: 8 }}>
-          <SkillAnalysisCard analysis={result.skillAnalysis} />
+        <Grid item xs={12} md={8}>
+          <KeywordAnalysisCard analysis={exampleAnalysis.keywordAnalysis} />
         </Grid>
-
-        <Grid size={{ xs: 12, md: 6 }}>
-          <KeywordAnalysisCard analysis={result.keywordAnalysis} />
+        <Grid item xs={12}>
+          <SectionBreakdownAccordion
+            sections={exampleAnalysis.sectionBreakdown}
+          />
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <SectionBreakdownAccordion sections={result.sectionBreakdown} />
-        </Grid>
-        <Grid size={{ xs: 12 }}>
-          <ActionPlanList plan={result.actionPlan} />
+        <Grid item xs={12}>
+          <ActionPlanList plan={exampleAnalysis.actionPlan} />
         </Grid>
       </Grid>
     </Box>
   );
-};
-
-export default AnlysisResult;
+}
