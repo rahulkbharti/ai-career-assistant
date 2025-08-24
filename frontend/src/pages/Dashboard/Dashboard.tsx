@@ -37,7 +37,7 @@ import {
 } from "@mui/icons-material";
 import { getJobApplications } from "../../services/jobAnalysisService";
 import type { JobApplication } from "../../services/jobAnalysisService";
-import SuggestionComponent from "./test";
+import { useNavigate, useNavigation } from "react-router-dom";
 
 // Stats card component
 interface StatsCardProps {
@@ -285,6 +285,7 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const navigate = useNavigate();
   // const theme = useTheme();
   // const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -412,7 +413,6 @@ const Dashboard: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         Dashboard
       </Typography>
-      <SuggestionComponent />
       {error && (
         <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
           {error}
@@ -487,7 +487,11 @@ const Dashboard: React.FC = () => {
                   <Typography variant="body1" color="textSecondary">
                     No job applications yet
                   </Typography>
-                  <Button variant="contained" sx={{ mt: 2 }}>
+                  <Button
+                    variant="contained"
+                    sx={{ mt: 2 }}
+                    onClick={() => navigate("/analyze")}
+                  >
                     Start Applying
                   </Button>
                 </Box>

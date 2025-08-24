@@ -6,6 +6,7 @@ import analysisResult from "./schemas/job_analysis.schema.ts";
 
 import type { JobDescription } from "../schema/types/jd.types.ts";
 import type { ResumeSchema as ResumeSchemaTYPE } from "../schema/types/resume.types.ts";
+import Analyse_Promt from "./finalPrompt.ts";
 
 interface ApiResponse<T = any> {
   success: boolean;
@@ -20,7 +21,7 @@ if (!API_KEY) {
 }
 
 const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 export const extractJobInformation = async (
   prompt: string = ""
@@ -66,7 +67,7 @@ export const extractResumeInformation = async (
           role: "user",
           parts: [
             {
-              text: "You are an expert HR analyst. Your task is Exturct Resume DATA for ATS. Strictly Follow the responseSchema",
+              text: "You are an expert HR analyst. Your task is to Extract Resume DATA for ATS. Strictly Follow the responseSchema",
             },
             {
               inlineData: {
@@ -97,9 +98,7 @@ export const jobAnalysis = async (
   resumeInfo: ResumeSchemaTYPE
 ): Promise<ApiResponse<string>> => {
   try {
-    const promt = `This Is JOB INFO :  ${JSON.stringify(
-      jobInfo
-    )} \n This is Resume : ${JSON.stringify(resumeInfo)}}`;
+    const promt = Analyse_Promt(jobInfo, resumeInfo)();
     console.log(promt);
     const result = await model.generateContent({
       contents: [
@@ -107,7 +106,7 @@ export const jobAnalysis = async (
           role: "user",
           parts: [
             {
-              text: ` **Role and Goal:** You are an expert HR analyst. Your task is to meticulously compare the provided resume against the job description and calculate a precise matching score out of 100. Strictly Follow the responseSchema.`,
+              text: `Calculate Score in % out of 100. Not only 85% use proper method to calculate.`,
             },
             {
               text: promt,
