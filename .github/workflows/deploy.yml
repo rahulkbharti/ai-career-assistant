@@ -56,6 +56,9 @@ jobs:
           # Upload only the build output from the frontend folder
           path: ./frontend/dist
 
+      - name: SPA fallback (copy index.html to 404.html)
+        run: cp ./frontend/dist/index.html ./frontend/dist/404.html
+
   # Deployment job
   deploy:
     environment:
