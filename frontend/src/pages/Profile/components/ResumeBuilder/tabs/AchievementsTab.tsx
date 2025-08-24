@@ -13,7 +13,6 @@ import {
 import {
   ExpandMore as ExpandMoreIcon,
   Close as CloseIcon,
-  Add as AddIcon,
 } from "@mui/icons-material";
 import type { Achievement } from "../../../../../schema/types/resume.types";
 
@@ -47,11 +46,11 @@ const AchievementsTab: React.FC<AchievementsTabProps> = ({
             <Typography>{achievement.title || "New Achievement"}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <IconButton onClick={() => onDelete("achievements", index)}>
                 <CloseIcon />
               </IconButton>
-            </div>
+            </Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <TextField
                 size="small"

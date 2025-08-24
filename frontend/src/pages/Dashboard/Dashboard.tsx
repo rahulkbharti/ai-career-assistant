@@ -37,7 +37,7 @@ import {
 } from "@mui/icons-material";
 import { getJobApplications } from "../../services/jobAnalysisService";
 import type { JobApplication } from "../../services/jobAnalysisService";
-import { useNavigate, useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Stats card component
 interface StatsCardProps {
@@ -407,7 +407,6 @@ const Dashboard: React.FC = () => {
       </Box>
     );
   }
-
   return (
     <Box>
       <Typography variant="h4" gutterBottom>

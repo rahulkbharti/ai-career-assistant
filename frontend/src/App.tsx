@@ -11,7 +11,7 @@ const App: React.FC = () => {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider>
-          <BrowserRouter>
+          <BrowserRouter basename="/ai-career-assistant">
             <AppRouter />
           </BrowserRouter>
         </ThemeProvider>

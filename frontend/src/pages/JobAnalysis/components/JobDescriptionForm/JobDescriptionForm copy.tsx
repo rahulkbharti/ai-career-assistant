@@ -16,79 +16,17 @@ import {
   InputLabel,
   Tabs,
   Tab,
-  Chip,
 } from "@mui/material";
 import {
   Description as DescriptionIcon,
   Work as WorkIcon,
   Business as BusinessIcon,
-  Add as AddIcon,
   AutoAwesome,
 } from "@mui/icons-material";
-import type { JobAnalysisRequest } from "../../../../services/jobAnalysisService";
+
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../../store/store";
-import type {
-  JobDescription,
-  SalaryRange,
-  SkillsAnalysis,
-} from "../../../../store/schema/job.schema";
-
-const ArrayInput: React.FC<{
-  items: string[];
-  onChange: (items: string[]) => void;
-  label: string;
-  placeholder: string;
-}> = ({ items, onChange, label, placeholder }) => {
-  const [newItem, setNewItem] = useState("");
-
-  const handleAddItem = () => {
-    if (newItem.trim()) {
-      onChange([...items, newItem.trim()]);
-      setNewItem("");
-    }
-  };
-
-  const handleRemoveItem = (index: number) => {
-    const newItems = [...items];
-    newItems.splice(index, 1);
-    onChange(newItems);
-  };
-
-  return (
-    <Box>
-      <Box display="flex" alignItems="center" gap={1} mb={2}>
-        <TextField
-          fullWidth
-          size="small"
-          value={newItem}
-          onChange={(e) => setNewItem(e.target.value)}
-          placeholder={placeholder}
-          onKeyPress={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleAddItem();
-            }
-          }}
-        />
-        <Button variant="contained" onClick={handleAddItem}>
-          <AddIcon />
-        </Button>
-      </Box>
-      <Box display="flex" flexWrap="wrap" gap={1}>
-        {items.map((item, index) => (
-          <Chip
-            key={index}
-            label={item}
-            onDelete={() => handleRemoveItem(index)}
-            color="primary"
-            variant="outlined"
-          />
-        ))}
-      </Box>
-    </Box>
-  );
-};
+import type { JobDescription } from "../../../../store/schema/job.schema";
 
 interface JobDescriptionFormComponentProps {
   jobInfo: JobDescription;
@@ -147,29 +85,6 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
 
   const handleInputChange = (field: keyof JobDescription, value: any) => {
     setJobInfo((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSkillsChange = (
-    category: keyof SkillsAnalysis,
-    skills: string[]
-  ) => {
-    setJobInfo((prev) => ({
-      ...prev,
-      skills_analysis: {
-        ...prev.skills_analysis,
-        [category]: skills,
-      },
-    }));
-  };
-
-  const handleSalaryChange = (field: keyof SalaryRange, value: number) => {
-    setJobInfo((prev) => ({
-      ...prev,
-      salary_range: {
-        ...prev.salary_range,
-        [field]: value,
-      },
-    }));
   };
 
   const handleAnalyzeJob = () => {

@@ -1,12 +1,13 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-import JDSchema from "./schemas/job_descriptions.schema.ts";
-import ResumeSchema from "./schemas/resume.schema.ts";
-import analysisResult from "./schemas/job_analysis.schema.ts";
+// import JDSchema from "./schemas/job_descriptions.schema.ts";
+// import ResumeSchema from "./schemas/resume.schema.ts";
+// import analysisResult from "./schemas/job_analysis.schema.ts";
 
 import type { JobDescription } from "../schema/types/jd.types.ts";
 import type { ResumeSchema as ResumeSchemaTYPE } from "../schema/types/resume.types.ts";
 import Analyse_Promt from "./finalPrompt.ts";
+import finalSystemPromt from "./finalSystem.promt.ts";
 
 interface ApiResponse<T = any> {
   success: boolean;
@@ -41,12 +42,12 @@ export const extractJobInformation = async (
       ],
       generationConfig: {
         responseMimeType: "application/json",
-        responseSchema: JDSchema,
+        // responseSchema: JDSchema,
       },
     });
 
     const response = result.response.text();
-    console.log("The Result", response);
+    // console.log("The Result", response);
     return { success: true, response };
   } catch (error: any) {
     console.error("Error generating content:", error);
@@ -80,12 +81,12 @@ export const extractResumeInformation = async (
       ],
       generationConfig: {
         responseMimeType: "application/json",
-        responseSchema: ResumeSchema,
+        // responseSchema: ResumeSchema,
       },
     });
 
     const response = result.response.text();
-    console.log("The Result", response);
+    // console.log("The Result", response);
     return { success: true, response };
   } catch (error: any) {
     console.error("Error generating content:", error);
@@ -99,14 +100,17 @@ export const jobAnalysis = async (
 ): Promise<ApiResponse<string>> => {
   try {
     const promt = Analyse_Promt(jobInfo, resumeInfo)();
-    console.log(promt);
+    // console.log(promt);
+    console.log("System Prompt", finalSystemPromt);
+    console.log("Promt:", promt);
+
     const result = await model.generateContent({
       contents: [
         {
           role: "user",
           parts: [
             {
-              text: `Calculate Score in % out of 100. Not only 85% use proper method to calculate.`,
+              text: finalSystemPromt,
             },
             {
               text: promt,
@@ -116,12 +120,12 @@ export const jobAnalysis = async (
       ],
       generationConfig: {
         responseMimeType: "application/json",
-        responseSchema: analysisResult,
+        // responseSchema: analysisResult,
       },
     });
 
     const response = result.response.text();
-    console.log("The Result", response);
+    // console.log("The Result", response);
     return { success: true, response };
   } catch (error: any) {
     console.error("Error generating content:", error);

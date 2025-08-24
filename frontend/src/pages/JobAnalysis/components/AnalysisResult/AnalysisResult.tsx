@@ -22,7 +22,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import EditIcon from "@mui/icons-material/Edit";
 import FlagIcon from "@mui/icons-material/Flag";
-import BuildIcon from "@mui/icons-material/Build";
+
 import type {
   ActionItem,
   KeywordAnalysis,
@@ -30,74 +30,9 @@ import type {
   SectionFeedback,
   SkillAnalysis,
 } from "../../../../schema/types/result.types";
-import type { JobAnalysisResult } from "../../../../store/schema/result.schema";
-
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 // --- Sample Data ---
-
-const exampleAnalysis: ResumeAnalysisOutput = {
-  overallMatchScore: 65,
-  analysisSummary:
-    "Your resume shows strong foundational experience but needs to be more closely aligned with the specific requirements of the Senior Product Manager role. Key areas for improvement include quantifying achievements and integrating specific keywords from the job description.",
-  skillAnalysis: {
-    matchedSkills: ["Reactjs", "nodejs"],
-    missingSkills: [
-      "B2B SaaS",
-      "Stakeholder Management",
-      "Market Analysis",
-      "JIRA",
-    ],
-    suggestions:
-      "Integrate missing keywords like 'B2B SaaS' and 'Stakeholder Management' into your work experience bullet points. For example, 'Led a cross-functional team to launch a new B2B SaaS product...'.",
-  },
-  keywordAnalysis: {
-    matchedKeywords: ["Product Management", "Agile", "Roadmap", "REST APIs"],
-    missingKeywords: [
-      "B2B SaaS",
-      "Stakeholder Management",
-      "Market Analysis",
-      "JIRA",
-    ],
-    suggestions:
-      "Integrate missing keywords like 'B2B SaaS' and 'Stakeholder Management' into your work experience bullet points. For example, 'Led a cross-functional team to launch a new B2B SaaS product...'.",
-  },
-  sectionBreakdown: [
-    {
-      sectionName: "Professional Summary",
-      analysis:
-        "The summary is a bit generic. It should be tailored to highlight your most relevant qualifications for this specific role.",
-      suggestions: [
-        "Rewrite the summary to mention '5+ years of experience in B2B SaaS product management'.",
-        "Include a key achievement that demonstrates your ability to lead product development from conception to launch.",
-      ],
-    },
-    {
-      sectionName: "Work Experience",
-      analysis:
-        "Your responsibilities are well-listed, but they read more like a list of duties than impactful achievements.",
-      suggestions: [
-        "For each bullet point, quantify your results. Instead of 'Managed product backlog,' try 'Managed and prioritized a product backlog of over 200 user stories, leading to a 15% increase in development velocity'.",
-        "Incorporate keywords like 'JIRA' and 'Agile' to describe your process, e.g., 'Utilized JIRA to manage sprints within an Agile framework...'",
-      ],
-    },
-  ],
-  actionPlan: [
-    {
-      priority: "High",
-      action:
-        "Rewrite the Professional Summary to align with the job description's core requirements.",
-    },
-    {
-      priority: "High",
-      action:
-        "Revise at least 3-4 bullet points in your most recent role to include quantifiable metrics and missing keywords.",
-    },
-    {
-      priority: "Medium",
-      action:
-        "Add a 'Technical Skills' subsection to your Skills section to explicitly list 'JIRA' and 'Confluence'.",
-    },
-  ],
-};
 
 // --- Reusable Components ---
 
@@ -140,8 +75,45 @@ const OverallScoreCard: React.FC<{ score: number; summary: string }> = ({
           >{`${score}%`}</Typography>
         </Box>
       </Box>
-      <Typography variant="body1" color="text.secondary">
-        {summary}
+      <Typography
+        variant="body1"
+        color="text.secondary"
+        sx={{ textAlign: "left" }}
+      >
+        <Markdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            table: ({ node, ...props }) => (
+              <table
+                border={1}
+                style={{ borderCollapse: "collapse", width: "100%" }}
+                {...props}
+              />
+            ),
+            th: ({ node, ...props }) => (
+              <th
+                style={{
+                  textAlign: "left",
+                  border: "1px solid #ddd",
+                  padding: "8px",
+                }}
+                {...props}
+              />
+            ),
+            td: ({ node, ...props }) => (
+              <td
+                style={{
+                  textAlign: "left",
+                  border: "1px solid #ddd",
+                  padding: "8px",
+                }}
+                {...props}
+              />
+            ),
+          }}
+        >
+          {summary}
+        </Markdown>
       </Typography>
     </CardContent>
   </StyledCard>
@@ -198,11 +170,11 @@ const SkillAnalysisCard: React.FC<{ analysis: SkillAnalysis }> = ({
   <StyledCard>
     <CardContent>
       <Typography variant="h6" gutterBottom>
-        Keyword Analysis
+        Skill Analysis
       </Typography>
       <Divider sx={{ my: 1 }} />
       <Typography variant="subtitle1" sx={{ mt: 2 }}>
-        Matched Keywords
+        Matched Skills
       </Typography>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
         {analysis.matchedSkills.map((skill) => (
@@ -215,7 +187,7 @@ const SkillAnalysisCard: React.FC<{ analysis: SkillAnalysis }> = ({
         ))}
       </Box>
       <Typography variant="subtitle1" sx={{ mt: 3 }}>
-        Missing Keywords
+        Missing Skills
       </Typography>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
         {analysis.missingSkills.map((skill) => (
@@ -321,13 +293,13 @@ const AnlysisResult: React.FC<AnalysisResultProps> = ({ result }) => {
         Resume Analysis Report
       </Typography>
       <Grid container spacing={4}>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12 }}>
           <OverallScoreCard
             score={result.overallMatchScore}
             summary={result.analysisSummary}
           />
         </Grid>
-        <Grid size={{ xs: 12, md: 8 }}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <SkillAnalysisCard analysis={result.skillAnalysis} />
         </Grid>
 

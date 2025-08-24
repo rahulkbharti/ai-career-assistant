@@ -16,18 +16,15 @@ import {
   InputLabel,
   Tabs,
   Tab,
-  Chip,
   IconButton,
 } from "@mui/material";
 import {
   Description as DescriptionIcon,
   Work as WorkIcon,
   Business as BusinessIcon,
-  Add as AddIcon,
   Close as CloseIcon,
   AutoAwesome,
 } from "@mui/icons-material";
-import type { JobAnalysisRequest } from "../../../../services/jobAnalysisService";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../../store/store";
 import type { JobDescription } from "../../../../schema/types/jd.types";
@@ -79,6 +76,7 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
       const text = await navigator.clipboard.readText();
       setJobDescription(text);
     } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
       console.error("Failed to read clipboard contents:", err);
     }
   };
@@ -323,7 +321,7 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
                       size={"small"}
                       value={jobInfo?.jobType}
                       label="Employment Type"
-                      onChange={(e) => handleInputChange(e, "", "jobType")}
+                      // onChange={(e) => handleInputChange(e, "", "jobType")}
                     >
                       <MenuItem value="Full-time">Full-time</MenuItem>
                       <MenuItem value="Part-time">Part-time</MenuItem>

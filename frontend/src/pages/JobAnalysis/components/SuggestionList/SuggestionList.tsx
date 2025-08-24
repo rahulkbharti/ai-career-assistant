@@ -8,7 +8,6 @@ import {
   ListItemIcon,
   ListItemText,
   Chip,
-  Paper,
 } from "@mui/material";
 import {
   Lightbulb as LightbulbIcon,

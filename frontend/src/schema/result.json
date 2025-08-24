@@ -1,11 +1,11 @@
 {
   "analysisMetadata": {
     "analysisDate": "YYYY-MM-DD",
-    "resumeFileName": "UserResume.txt", // Placeholder
+    "resumeFileName": "UserResume.txt",
     "jobDescriptionTitle": "[Job Title from Description]"
   },
   "overallMatch": {
-    "matchScore": "POTENTIAL_MATCH", // e.g., STRONG_MATCH, POTENTIAL_MATCH, NEEDS_IMPROVEMENT
+    "matchScore": "POTENTIAL_MATCH",
     "summary": "A concise summary of how your profile aligns with the role, highlighting key strengths and the most critical areas for improvement.",
     "keyStrengths": [
       "Strong foundation in core required technologies like [Technology A] and [Technology B].",

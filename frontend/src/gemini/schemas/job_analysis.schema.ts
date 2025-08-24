@@ -1,5 +1,3 @@
-import { SchemaType } from "@google/generative-ai";
-
 const analysisResult = {
   //   $schema: "http://json-schema.org/draft-07/schema#",
   //   title: "Resume Analysis and Suggestions",
