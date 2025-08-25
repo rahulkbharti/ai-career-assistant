@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { extractResumeInformation } from "../../../gemini/system.ts";
 import { useDispatch } from "react-redux";
 import { addResume as _addResume } from "../../../store/features/resumeSlice.ts";
-
+import { extractResumeInfo } from "../../../gemini/system2.ts";
 export interface Resume {
   id: string;
   name: string;
@@ -89,16 +88,20 @@ const useProfileData = () => {
   const addResume = async (resume: Omit<Resume, "id">) => {
     try {
       const data_string: string = await fileToBase64(resume.file);
-      const resume_data = await extractResumeInformation(data_string);
-      if (resume_data.success) {
-        const resume_json_data = JSON.parse(resume_data.response || "{}");
-        resume_json_data.id = Math.random().toString(36).substr(2, 9);
-        resume_json_data.name = "master";
-        resume_json_data.job_role = "Software Engineering";
-        // console.log(resume_json_data);
-        dispatch(_addResume(resume_json_data));
+      const res = await extractResumeInfo(data_string);
+      console.log(res);
+      if (res.success === true && res.response) {
+        const randomID = Math.random().toString(36).substr(2, 9);
+        const response = {
+          ...res.response,
+          id: randomID,
+          name: res.response?.basics?.name || "",
+          job_role: "Software Engineering",
+        };
+        dispatch(_addResume(response));
       } else {
-        alert(resume_data.error);
+        console.error(res.error);
+        alert(res.error);
       }
     } catch (error) {
       alert(error);

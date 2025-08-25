@@ -81,7 +81,7 @@ const JobDescriptionForm: React.FC<JobDescriptionFormComponentProps> = ({
     }
   };
 
-  const handleJobExtruction = () => {
+  const handleJobExtruction = async () => {
     if (!jobDescription) {
       alert("Enter The Job Description");
       return;
